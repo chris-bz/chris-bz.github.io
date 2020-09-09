@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Keyboard Nest</title>
+    <description>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</description>
+    <link>http://yourdomain.com/</link>
+    <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Wed, 09 Sep 2020 08:53:43 +0200</pubDate>
+    <lastBuildDate>Wed, 09 Sep 2020 08:53:43 +0200</lastBuildDate>
+    <generator>Jekyll v3.1.6</generator>
+    
+      <item>
+        <title>Converting date to ISO 8601 in Python</title>
+        <description>&lt;h2 id=&quot;why-use-iso-8601&quot;&gt;Why use ISO 8601?&lt;/h2&gt;
+
+&lt;p&gt;No matter which area a programmer works in, he most likely has to deal with dates in some way. Even writing a basic application log benefits from stamping information with dates, so we know when a potential problem ocurred etc.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, they are a tricky subject. It’s often an extra that just needs to work, but doesn’t. And it can fail for many reasons.&lt;/p&gt;
+
+&lt;p&gt;One of the main ones is incompatibility between different date formats. Sometimes, the month is a word, sometimes it’s a number. The standard for order of year, month and day is different in one country than it is in another.&lt;/p&gt;
+
+&lt;p&gt;When month is a number and it’s 12 or lower, we can confuse it with day number and not be able to verify which is which. One month has 30 days, another has 31. April has 28 days… but only 3 years out of 4. All that needs to be taken into consideration when dealing with dates.&lt;/p&gt;
+
+&lt;p&gt;To alleviate the pain from some of those problems, ISO 8601 was introduced. It is an international standard, an exact way of writing date and time so that there is no confusion.&lt;/p&gt;
+
+&lt;p&gt;Having all dates in one format is important for one’s own projects. When they are always written the same, there is no need to convert anything, they are compatible with each other for future use by default.&lt;/p&gt;
+
+&lt;p&gt;It is also important externally. When someone else needs to process them, there is no need to verify what is what, to format string to make it compatible with another company’s own internal formatting standard.&lt;/p&gt;
+
+&lt;p&gt;Choosing ISO 8601 is also very convenient for the programmer. Most frameworks, modules etc. that deal with dates use it as the default standard and force the user to first convert the input data string to ISO 8601 before further processing. Such is the case with SQLite, Pandas, Django and many more.&lt;/p&gt;
+
+&lt;p&gt;It is always the best practice to try to stick to one data formatting standard whenever possible. And since ISO 8601 is the most popular standard for date formatting in the world, it is most convenient to stick to it. It makes our dates most compatible with other dates “out there”, saving us from many potential headaches in the future.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;what-needs-does-this-converter-address&quot;&gt;What needs does this converter address?&lt;/h2&gt;
+
+&lt;p&gt;Unfortunately, there is no one correct way to write a converter. It all depends on which context it needs to be used, and based on that, the optimal behavior can be different.&lt;/p&gt;
+
+&lt;p&gt;For example, in some cases it is crucial that failure to convert produces an error and instantly stops the program from running to not pollute the data with pseudo-dates, or empty strings which have to be addressed quickly not to break something else.&lt;/p&gt;
+
+&lt;p&gt;Another time, it is mandatory that the service continues working and error is handled silently and gracefully. There is no right or wrong way to write it, it’s all context-dependent.&lt;/p&gt;
+
+&lt;p&gt;The converter function below behaves like so:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;deals just with date, not date and time&lt;/li&gt;
+  &lt;li&gt;does not require hint parameters to know the format, it tries to guess which is which&lt;/li&gt;
+  &lt;li&gt;it returns None on failure, does not break whatever’s running it&lt;/li&gt;
+  &lt;li&gt;when month and day are both numbers, it assumes that month is always the digit on the left side, and day on the right&lt;/li&gt;
+  &lt;li&gt;the year is always a four-digit number&lt;/li&gt;
+  &lt;li&gt;the month can be either a number, or a word&lt;/li&gt;
+  &lt;li&gt;a day can be either a one-digit number or a two-digit number&lt;/li&gt;
+  &lt;li&gt;there can be no day, but month and year both have to be present&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Make sure that a converter you need meets all the criteria above, or that you have fixes for when it doesn’t.&lt;/p&gt;
+
+&lt;p&gt;Below I break apart the code. If you just want the entire thing to copy-paste, click &lt;a href=&quot;#full_code&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;code-breakdown&quot;&gt;Code breakdown&lt;/h2&gt;
+
+&lt;p&gt;The converter is best written as a function, convenient to keep in a separate python helper file and imported as needed. It takes a date, ie. a string hopefully containing all the ingredients we need.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;def toiso8601(date):&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;First, we write a sub-function that converts a month, written as a word, to a number (still written as string). This sequence can be potentially executed twice in our code, so there is no point repeating the whole thing. Instead, we make a function of it and call it when needed.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;month_to_digit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;months_full&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;january&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;february&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;02&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;march&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;03&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;april&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;04&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;may&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;05&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;june&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;06&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;july&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;07&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;august&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;08&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;september&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;09&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;october&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;10&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;november&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;11&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;december&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;12&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;months&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;jan&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;feb&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;02&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;mar&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;03&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;apr&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;04&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;may&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;05&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;jun&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;06&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;jul&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;07&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;aug&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;08&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;sep&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;09&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;oct&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;10&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;nov&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;11&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;dec&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;12&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months_full&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months_full&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;ERROR: not a valid date. month word unknown&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;There are two types of month words popular in writing dates in English. The first one is full words, the second the first 3 letters of each word. In ISO 8601, month is a two-digit number. And so we have to convert.&lt;/p&gt;
+
+&lt;p&gt;For that, we have two dictionaries, one for each type. The keys are the month-words, the values are numbers to which they convert. Alternative is to create one dictionary and test for full name against full key name, or for first three letters of the parsed string against the first three letters of each dictionary key, saving us from the need to create the second dictionary.&lt;/p&gt;
+
+&lt;p&gt;Notice that the numbers are in quotes. They are strings, first because ‘03’ is not a number understandable by Python, second because the entire process is taking string input and outputting another string. There is no reason to switch to any other data type at any point, as sooner or later it would have to be converted back into a string.&lt;/p&gt;
+
+&lt;p&gt;If conversion fails (ie. the word doesn’t match a month name in either dictionary), we set month_final to None. At the end of our function, we make a condition that year, month and day all have to be set and only then do we generate and return the final date. Otherwise, we’d let some gibberish word posing as month pass through to the final string.&lt;/p&gt;
+
+&lt;p&gt;There is no ISO 8601 date without a year, and setting it to some default is a risky business. You could, for example, decide to go with ‘0000’. If such year has no reasons to exist in our data (let’s say we have a movie database), setting it to such would conform to the ISO 8601 standard while giving us a valuable information that that particular piece of data is missing. In some datasets, the data has to exist, even if our database tool of choice allows setting datetime fields to be empty. This would force us to use a solution like that.&lt;/p&gt;
+
+&lt;p&gt;Since for my usecase it’s not a problem, if a four-digit number indicating year is not found, the function informs about the problem, returns None and that’s the end of it.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;ERROR: not a valid date. year missing&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The last line of that chunk of code extracts the string from a regex object. If we had it done earlier (not knowing if regex found anything), pointing to a non-existing item would throw an error. That behavior we do not want, as it would force us to use it inside a ‘try’ clause.&lt;/p&gt;
+
+&lt;p&gt;After setting up a year variable, we now need to delete this number from the date string and only seek in that new variable. Otherwise, it would extract sub-numbers from it as potential month and day numbers.
+	date_no_year = re.sub(year, ‘’, date)&lt;/p&gt;
+
+&lt;p&gt;Then, we proceed to look inside that newly cut string for a word indicating month and as many sets of digits as we can find. The combination of these two findings are the base for our final assessments on what data we have and how to process it.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d?&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date_no_year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;[A-Za-z]{3,}&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date_no_year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;For that, we use regex module’s ‘findall’ and ‘search’ functions. Both month and day can be a single, or a double-width string (hence ‘?’ by the second one, meaning “0 or 1 of it”). Month words only contains letters and all the words in both dictionaries are of 3+ length. ‘{3,}’ means “minimum 3, maximum unspecified, so equal or higher than 3”.&lt;/p&gt;
+
+&lt;p&gt;Being specific here is important. If someone would surprise our converter with a peculiar date, like 1969x05x20, our function would still work and omit ‘x’ separators, as they are only of length 1. Not demanding three or more letters in a word, those x-es would be added needlessly as separate ‘month or day’ items and cause the script to fail to fullfill its duty and return None.&lt;/p&gt;
+
+&lt;p&gt;Now we get into different scenarios.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_to_digit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;0&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;First is the case of month being a word (as in containing letters, not in regex sense, where digits also qualify as words) and month_day search returning only one object. If we have a year, some word and some digit, it is safe to assume that the word is a month and the digit is a day. So we set up both variables, giving us a first potential complete set of year, month and day variables.&lt;/p&gt;
+
+&lt;p&gt;The last two lines are important. ISO 8601 does not accept single-digit numbers, neither for date nor for time. If the input format is ‘Sep 1, 1995’, the day needs ‘0’ in front of 1.&lt;/p&gt;
+
+&lt;p&gt;Because strings are iterable in Python, it is very easy to check for its length and if it’s 1 (which means the number is most likely 1-9 with no 0 in front), we add it and the day variable is complete.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The first alternative check is for no word indicating month and just a single digit found. In most cases, when we only have a year and a single number, that single number is a month. Nobody writes year and day of a month that is not specified.&lt;/p&gt;
+
+&lt;p&gt;In rare cases, this extra number means day of year. This converter is not equipped to deal with such scenario and if it is indeed what you have to deal with, you’d have to use Python’s datetime module to convert it to a final date. It is easily achievable once you know this primary tool for dealing with dates in Python.&lt;/p&gt;
+
+&lt;p&gt;In many scenarios, when the day is not found, we might want the whole date to be invalid. For my use, I still need the date, which is only used for getting approximate guesses to another object with another date (the ones with smallest timedelta between them being paired), so few days off are much less hurtful than not having a date at all.&lt;/p&gt;
+
+&lt;p&gt;If you want to not return any date if the day is missing, it is easy to change in this function. Because the final date generation will fail if any of the date elements is not set, all you have to do is change “day = ‘01’” to “day = None” in two places.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_to_digit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Next is a straightforward case, where we have a word for month, but no extra number that would represent a day. Here, again we blindly set the day to first of the month.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;0&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Lack of a word representing month and two sets of digits indicates both month and day being numbers. Like mentioned in the function summary, this part assumes month number being to the left of day number. You can reverse this order by setting month to month_day[1] and day to month_day[0].&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;ERROR: not a valid date&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Finally, we write what to do if all our previous conditions failed. If we got to it, this means that either of these is true:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;word representing month was not found and regex was not able to fetch any numbers from string, leaving us with no data to work with&lt;/li&gt;
+  &lt;li&gt;besides year, there were more than two other numbers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Three digits make it impossible to assess which one is month and which one is day. Usually, it means that the string we got is not date at all, or date with some unfortunate extra luggage.&lt;/p&gt;
+
+&lt;p&gt;One way or the other, under this circumstance it is best to not play wild guesses and instead call it quits. Print will inform us about the problem in a terminal window. Setting year to None will make the final condition fail, as it tests for the presence of year, month and day. ‘None’ is faulty in Python, it indicates failure, and so the condition is not met.&lt;/p&gt;
+
+&lt;p&gt;The final piece of our code checks for the presence of all objects and constructs a string from it.&lt;/p&gt;
+
+&lt;p&gt;The last return is silent and applies only when that condition is not met. Every function in Python returns None, if not specified elsewhere. Here, we want to return date, but only if we have all the ingredients. If not, there are no final return instructions, which means the function will return ‘None’.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;final_date&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;{year}-{month}-{day}&#39;&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;final_date&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;In other words, the final lines could be more redundantly written this way:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;final_date&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;{year}-{month}-{day}&#39;&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;final_date&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;First return reached instantly ends the function, and so it reaches ‘return None’ only if year, word and month are not set to anything truthy.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+And here is the entire code:&lt;a id=&quot;full_code&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;	&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;re&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;toiso8601&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;month_to_digit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;months_full&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;january&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;february&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;02&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;march&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;03&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;april&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;04&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;may&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;05&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;june&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;06&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;july&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;07&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;august&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;08&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;september&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;09&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;october&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;10&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;november&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;11&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;december&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;12&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;months&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;jan&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;feb&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;02&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;mar&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;03&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;apr&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;04&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;may&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;05&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;jun&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;06&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;jul&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;07&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;aug&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;08&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;sep&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;09&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;oct&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;10&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;nov&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;11&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;dec&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;12&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months_full&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+				&lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months_full&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+				&lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;months&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_as_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+				&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;ERROR: not a valid date. month word unknown&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+				&lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_final&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;ERROR: not a valid date. year missing&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;date_no_year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d?&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date_no_year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;[A-Za-z]{3,}&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date_no_year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_to_digit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+				&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;0&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_to_digit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&#39;01&#39;&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_word&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month_day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;ERROR: not a valid date&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;final_date&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&#39;{year}-{month}-{day}&#39;&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;final_date&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+</description>
+        <pubDate>Mon, 07 Sep 2020 11:53:01 +0200</pubDate>
+        <link>http://yourdomain.com/python/2020/09/07/converting-date-to-iso8601-in-python.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/python/2020/09/07/converting-date-to-iso8601-in-python.html</guid>
+        
+        
+        <category>python</category>
+        
+      </item>
+    
+      <item>
+        <title>CMUS music player review</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/img/cmus-music-player-review/cmus1.png&quot; alt=&quot;CMUS library view&quot; /&gt;
+version reviewed: 2.7.0&lt;br /&gt;
+installed on: Linux Mint 19&lt;/p&gt;
+
+&lt;p&gt;CMUS is probably the most popular terminal-based music player for Unix operating systems. The competition is almost non-existent, and even from that small pool, some applications do not look to meet the same needs CMUS addresses (some basically play a single specified track and that’s it).&lt;/p&gt;
+
+&lt;p&gt;Despite being very satisfied with my previous player, DeadBeef, I was eager to look for something that could be fully controlled from within by keyboard, and thus free up various system-wide (and Ranger-wide) playback shortcuts with one application shortcut, and give all the commands from inside the program inside the terminal window. Which, of course, has its advantages over graphical interface.&lt;/p&gt;
+
+&lt;p&gt;DeadBeef already comes chock-full of keyboard shortcuts, including specialized ones that you’ll struggle to find in most music players, like remove currently played file from disk, or look it up on last.fm. Spoiled for choice, I was coming with high expectations.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;views&quot;&gt;Views&lt;/h2&gt;
+
+&lt;p&gt;By pressing numbers 1-7, we switch between different tabs, which in CMUS are called ‘views’. First one is tree view (aka. library), second is sorted library, third is playlist, fourth is queue. We get three options for three different scenarios, depending on how long do we plan on keeping the file on the list:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;library is for long-term  additions that is supposed to reflect all the music we have on disk (or at least the part of it which we want to have quick access to)&lt;/li&gt;
+  &lt;li&gt;playlist is for ‘current’ use&lt;/li&gt;
+  &lt;li&gt;queue is a list that takes priority - whatever is added there is going to be played immediately after the currently played track and only after&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Majority of users will spend majority of time either in library view, or playlist view, depending of course on which they find more convenient.&lt;/p&gt;
+
+&lt;p&gt;The librarians will find separate playback queue extremely useful. Since in library, an order of tracks is predetermined on loading, it is very convenient to press whatever key we have bound to the win-add-q command to add it to music queue. This way, we use library to play entire albums and in between we add to queue whatever music we scavenge outside the current album’s directory.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, using queue for playlistians is not as useful. In playlist, we set whatever order of tracks played ourselves. And so queue view doesn’t address the natural limitations of library view. We end up splitting our playlist into two for no reason.&lt;/p&gt;
+
+&lt;p&gt;A better solution for people who use playlist as their primary queuing tool would be to have an extra ‘insert into playlist after currently played track” command for cmus-remote. Unfortunately, you’d struggle to find it in almost all music players out there and it’s a very handy feature that would completely remove any need to use queue view for most playlist users.&lt;/p&gt;
+
+&lt;p&gt;The version 2.7.0, which I installed from official repository, is missing an ability to set the default view on program startup. As a playlist user, I have to manually focus the player and press ‘3’ on each system startup to switch from an empty library window to playlist view.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cmus-music-player-review/cmus2.png&quot; alt=&quot;CMUS playlist view&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;An auto-detect feature would be nice as well - if playlist is populated, but library is empty, start with playlist view. If both are empty, but queue contains tracks, focus queue view on startup.&lt;/p&gt;
+
+&lt;p&gt;An auto-switch to view when adding to it would also solve this problem, but is missing too. (edit: in version 2.8.0, there is a new cmus command ‘start_view’, which probably solves the problem)&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;speed&quot;&gt;Speed&lt;/h2&gt;
+
+&lt;p&gt;One of the reasons why someone might want to switch to a terminal-based application is speed. Perhaps the user has a very old laptop and wants to make it usable, but the modern bulky applications slow it down too much.&lt;/p&gt;
+
+&lt;p&gt;With music players for people with large music libraries on their hard drives, this is very relevant. Many programs perform well with single playlists and up-to-medium-size libraries, but once the going gets tough, they can start forever and crush often, searching is extremely slow etc.&lt;/p&gt;
+
+&lt;p&gt;A program that is displayed in a terminal emulator window does not necessarily have to be fast (Kakoune being a good example), but most of the time switching to a text interface helps to increase system performance on old computers.&lt;/p&gt;
+
+&lt;p&gt;Here, CMUS delivers. It can handle ridiculously large playlists with ease. Searching works like a breeze, too. If performance is your primary concern, switching to CMUS is definitely worth considering.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;key-bindings&quot;&gt;Key bindings&lt;/h2&gt;
+
+&lt;p&gt;Just like so many other terminal applications, CMUS is somewhat inspired by VIM when it comes to navigation. You can move up and downwith home row keys, quit the program with ‘:q’.&lt;/p&gt;
+
+&lt;p&gt;It is possible to move selected track up or down, switch views, increase/decrease volume, pause/unpause, control playback, mark tracks for operations, execute shell commands and more.&lt;/p&gt;
+
+&lt;p&gt;Together with options, keybindings reside in a config file. Conveniently, this file is editable from inside the program as one of views. You can reach it by pressing ‘7’. Lines are highlighted same as tracks are in other views. We roll down or up to reach the line we want to edit and press enter. A colon followed by the command to change set to current value is displayed at the bottom, enabling us to edit.&lt;/p&gt;
+
+&lt;p&gt;The operation needs to be finished by pressing enter. That means if we screw up, we have to correct, because whatever we accept with enter will stay in config.&lt;/p&gt;
+
+&lt;p&gt;The program checks for validity of input only for options. If it gets the value that doesn’t exist, it reverts to last correct setting. If we edit a boolean field and we insert non-bolean value, whatever that is, it will display an error and then set the option’s value to false, since we just fed it something that is not allowed, which boolean translates to false. It doesn’t matter if it was true or false before.&lt;/p&gt;
+
+&lt;p&gt;When binding keys to commands, there is no check. Any gibberish will be accepted and the error will show only after pressing the bound key.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;string-formatting&quot;&gt;String formatting&lt;/h2&gt;
+
+&lt;p&gt;CMUS offers surprising flexibility in what is displayed in each field in each view (and in program title, which is very important for some applications).&lt;/p&gt;
+
+&lt;p&gt;It gives access to many tag variables and lets the user format them in any way he sees fit. Here, the program is as good as they come. You’d struggle to find a music player that gives you more freedom to shape the way tag data is displayed.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;tag-viewingediting&quot;&gt;Tag viewing/editing&lt;/h2&gt;
+
+&lt;p&gt;And yet, it doesn’t have an option to display full tag, even just for mp3 files.&lt;/p&gt;
+
+&lt;p&gt;Tag-editing duties are usually split between two programs: tag editor for bulk operations and music player for single corrections. I see a misspelled artist name in player window, I edit this file to make a quick correction in-place.&lt;/p&gt;
+
+&lt;p&gt;No need to start another terminal session, find the directory and write full command pointing to a file just to remove one ‘d’ from the end of an artist string.&lt;/p&gt;
+
+&lt;p&gt;You could argue that perhaps the user should leave tag editing duties to his tag editor, but that would be sacrificing convenience for ideology. And it’s a poor argument, the file tag is read and displayed by the program already. Whatever tags are read by the player are then potentially scrobbled. It’s not a separate case.&lt;/p&gt;
+
+&lt;p&gt;But there is no argument for not letting the user view the tag in full. This is really a basic, elemental feature that, just like equaliser, everybody takes for granted in a music player. I doubt many people, when researching a potential change of their music software, checks for the presence of the two, instead taking it for granted.&lt;/p&gt;
+
+&lt;p&gt;Notice that there is a a plugin for editing tags, just like there is for playing a random track. How good it is, I don’t know. Even if they are great, this functionality needs to be integrated into the base software.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;file-browsing&quot;&gt;File browsing&lt;/h2&gt;
+
+&lt;p&gt;Ranger offers too much convenience with file management to delegate some of it to CMUS’ file browser. For me, it’s most convenient to select either single track, multiple tracks, or a folder and then order CMUS to either play or enqueue it (append it to the bottom of current playlist).&lt;/p&gt;
+
+&lt;p&gt;People who operate this way will find file browser useless, and in CMUS that browser is a first-class citizen, by default available by pressing ‘5’ on keyboard. Built browser will always have its limitations compared to a piece of software that is dedicated to just this task. Same for people who navigate their hard drives directly in command line, spoiled for endless customization possibilities.&lt;/p&gt;
+
+&lt;p&gt;Of course, it’s not a problem in any way, as it doesn’t take any unnecessary space and the access to it can be unbound. Whoever likes using it has the option to use it. And some internal file pointer had to be developed anyway.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;issuing-commands-from-outside-cmus&quot;&gt;Issuing commands from outside CMUS&lt;/h2&gt;
+
+&lt;p&gt;Here’s where things get complicated. Every time CMUS starts, a tool named cmus-remote starts as well. It enables us to control playback, volume control and few other things through a socket, from outside the program. This way, we can, for example, configure custom wireless remote to jump between tracks on a playlist without the need to do it on keyboard.&lt;/p&gt;
+
+&lt;p&gt;List of commands is short, and they are stripped in functionality compared to how other players react to particular commands.&lt;/p&gt;
+
+&lt;p&gt;For example, the convention is that using the equivalent of ‘cmus-remote filename.mp3’ (directly giving the program a file to work with) does all these:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;stops current playback&lt;/li&gt;
+  &lt;li&gt;clears current playlist&lt;/li&gt;
+  &lt;li&gt;adds the pointed file&lt;/li&gt;
+  &lt;li&gt;focuses it&lt;/li&gt;
+  &lt;li&gt;starts playback&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In CMUS, this command just adds it to the bottom of whatever place we point to. (library, playlist or queue). It does not automatically switch, nor start playback. Whether switching 5-step convenient shortcut for a simple enqueue as default is a good choice, it is of course a matter of preferences. But the above is default in most applications for a reason. Most people prefer it that way.&lt;/p&gt;
+
+&lt;p&gt;Most CMUS commands refuse to offer anything extra. ‘–next’ doesn’t switch to next file and begin playback, it just switches to next file. This enables, for example, hopping 5 positions down without hearing the beginning of each track. But it is a very mild inconvenience to which people are used to and comes at a cost in other contexts.&lt;/p&gt;
+
+&lt;p&gt;Good design choice was to make ‘–next’ loop playlist. If we are at the last position in the playlist and give that command, it will start from the beginning. It saves us from traversing the entire playlist, or having a separate command to ‘go to top’.&lt;/p&gt;
+
+&lt;p&gt;I may be scanning an album for a good track I remember from youth. And so I have to issue –next command followed by –play command. Not this track. Another –next, another –play.&lt;/p&gt;
+
+&lt;p&gt;Most ‘nexts’ will most likely be the cases of “don’t want this, play me the next one” and here again we’re taxed with either double keystrokes for that common use case, or writing a separate shortcut/programming a separate button for it, One way, or the other, not good.&lt;/p&gt;
+
+&lt;p&gt;And things get more complicated.&lt;/p&gt;
+
+&lt;p&gt;Currently played track remains being one no matter what. If I pause playback and then clear whatever list I’m using for playback, it is somewhat logical that the paused track remains present and ready to continue playback, despite removing it from a list in which it was played. After all, we just paused it, the pointer sits somewhere between its start and end.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cmus-music-player-review/cmus3.png&quot; alt=&quot;CMUS options view&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;But when the track is stopped and then the playlist is cleared, I am giving two commands to get rid of it, and yet when I add some new music and order a ‘–play’ command, it doesn’t start playing the first track from the freshly added ones. Instead, it starts the last played one from the beginning!&lt;/p&gt;
+
+&lt;p&gt;We are past it twice, already have a new batch ready for playback, but the player doesn’t want to let go of the past. Hence, instead of ‘cmus-remote –clear –play sometrack.mp3’, the command to produce behavior surely desired by majority of users has a mandatory ‘–next’. We have to use next to point to a first object from the list.&lt;/p&gt;
+
+&lt;p&gt;And since ‘next’ does not imply “and start playback”, if we want it, we have to ensure it. This litters large part of commands we’ll be issuing with ‘–play’, because if entire playlist had finished playing before we added new objects to it, the playback got stopped.&lt;/p&gt;
+
+&lt;p&gt;And in CMUS’ commands logic, if it was playing, switching tracks also continues playing. If it wasn’t, switching will not play. Switching is just switching. It doesn’t concern itself with playback status. Sounds good on paper, in practice it is a big annoyance.&lt;/p&gt;
+
+&lt;p&gt;Look at this command from DeadBeef:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;–play-pause       Start playback if stopped, toggle pause otherwise&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Simple conditional logic and very convenient to use. In CMUS, if you say play, it plays if it isn’t already. You say stop, it stops if it’s not stopped already. You can toggle play with pause, but not with stop.&lt;/p&gt;
+
+&lt;p&gt;Another nice DeadBeef command absent in CMUS, particularly interesting for people who like to gamble, is:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;–random           Random song in playlist&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;’–seek’ is a single exception from the trend here. ‘seek +10’ will move the playback 10 seconds forward. We can seek backwards, for example with ‘seek -20’ to go twice that length in the opposite direction. A cherry on top is ‘seek 30’ (ie. without an operator in front) that enables us to jump to the 30th second of that track. A rare need for sure, but it’s always nice that we have this possibility.&lt;/p&gt;
+
+&lt;p&gt;Armed with so much flexibility, we can program a remote so that, for example, we have 3 seek options: +3s/-3s, +10s/-10s and +60s/-60s, giving us ingredients for a beefy remote.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;bugs&quot;&gt;Bugs&lt;/h2&gt;
+
+&lt;p&gt;I did not have the opportunity to test CMUS on another machine, but on mine cmus-remote is extremely unreliable. I remotely control behavior of many programs and scripts and no software ever misbehaves, but CMUS does that all the time.&lt;/p&gt;
+
+&lt;p&gt;For some time, I thought there is something in the way program acts that I don’t understand, and so I tested various command combinations either as a single command, or in chain, but in the end everything failed. There was no reliable way to set cmus-remote for player control.&lt;/p&gt;
+
+&lt;p&gt;Ranger’s rifle.conf file contains default applications, so the file manager knows what to run when it encounters a file with a particular extension. We can set it up to do some action in CMUS, by executing ‘cmus-remote –clear –next –play – “$1”’. It clears the playlist, adds the track, switches to it and begins playback… or at least is does so some of the time.&lt;/p&gt;
+
+&lt;p&gt;Other times it adds the file, but does not switch to it and begins playback of the last-played track.&lt;/p&gt;
+
+&lt;p&gt;Because every ‘–next’ has a chance to miss bigger than even more adventurous RPG players might now want to gamble on, we can work around it by issuing the same command 4 times. I did test it 50 times and not once has it failed.&lt;/p&gt;
+
+&lt;p&gt;The problem arises when we are adding more than one file. With one, it’s not a problem since it either switches to that one file or not and ultimately it does. But with more than one, if each next succeeds, the selection travels further and further! Or at least it would, as even one ‘–next’ can move the cursor down by a random number.&lt;/p&gt;
+
+&lt;p&gt;Outside of this behavior, I haven’t encountered any other bugs, but this one alone makes the program completely unusable for me. If you decide to install it, right away go to a folder that contains multiple mp3 files, add them to playlist with ‘cmus-remote *’ and then start ordering ‘cmus-remote –next’ and see if it switches one position down each time.&lt;/p&gt;
+
+&lt;p&gt;Because if it doesn’t, well… good luck using the program ;)&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;errors&quot;&gt;Errors&lt;/h2&gt;
+
+&lt;p&gt;Errors are being displayed at the penultimate line in terminal window, by default in a dark red color (customizable, as colors of all other types of objects). Unfortunately, they don’t timeout, but stay there until we do anything inside the player window.&lt;/p&gt;
+
+&lt;p&gt;For playlist users, it is an annoyance, since they will be issuing most commands through cmus-remote and not touch terminal window directly.&lt;/p&gt;
+
+&lt;p&gt;You can play 10 albums, clear playlist 10 times, pause and unpause 100 times, and that ancient error will still be there for no reason.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;equalizer&quot;&gt;Equalizer&lt;/h2&gt;
+
+&lt;p&gt;Again, for some reason, it’s missing! For music player, it is an absolute must. My headphones, for example, have a very bad default sound, but when tweaked in an equalizer, they can sound pretty good. Without the ability to play with frequencies, I am forced to use system-wide solutions, which I do not mind, but many people will.&lt;/p&gt;
+
+&lt;p&gt;Some of those solutions are obscure, some are hard to wrap head around, some produce artifacts and choke on sound when processor is running some taxing script.&lt;/p&gt;
+
+&lt;p&gt;PulseEffects is a very nice system set of tools (assuming someone uses PulseAudio) that contains an equalizer. Combining it with CMUS puts the user in a potentially weird space - a terminal-based music player backed by a graphical interface equalizer. Some choose terminal applications for the sake of them being terminal applications, in which case an extra graphical dependency make the switch a no-go.&lt;/p&gt;
+
+&lt;p&gt;For people willing to go this route, there may be a nasty surprise awaiting: PulseEffects fails to start as service on some distributions, requiring always having a graphical interface present to work.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;I had high hopes regarding CMUS, to the point of blindly switching to it from a program which, like already mentioned, I was very satisfied with. Unfortunately, its many problems and shortcomings made it impossible to use and after a week I gave up looking for solutions and went back to DeadBeef.&lt;/p&gt;
+
+&lt;p&gt;If on your machine cmus-remote commands work as intended and lack of equalizer and tag viewer/editor are irrelevant to you, then you may still want to try it out. Because outside of those issues, everything works like a charm.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, for me each one of those is a dealbreaker, and all together make CMUS unarmed for daily use.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
+        <link>http://yourdomain.com/program/reviews/2020/09/01/cmus-music-player-review.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/program/reviews/2020/09/01/cmus-music-player-review.html</guid>
+        
+        
+        <category>program</category>
+        
+        <category>reviews</category>
+        
+      </item>
+    
+  </channel>
+</rss>

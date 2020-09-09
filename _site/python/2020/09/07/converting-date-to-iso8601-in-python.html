@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Converting date to ISO 8601 in Python</title>
+  <meta name="description" content="Why use ISO 8601?">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://yourdomain.com/python/2020/09/07/converting-date-to-iso8601-in-python.html">
+  <link rel="alternate" type="application/rss+xml" title="Keyboard Nest" href="http://yourdomain.com/feed.xml">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Keyboard Nest</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Converting date to ISO 8601 in Python</h1>
+    <p class="post-meta"><time datetime="2020-09-07T11:53:01+02:00" itemprop="datePublished">Sep 7, 2020</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="why-use-iso-8601">Why use ISO 8601?</h2>
+
+<p>No matter which area a programmer works in, he most likely has to deal with dates in some way. Even writing a basic application log benefits from stamping information with dates, so we know when a potential problem ocurred etc.</p>
+
+<p>Unfortunately, they are a tricky subject. It’s often an extra that just needs to work, but doesn’t. And it can fail for many reasons.</p>
+
+<p>One of the main ones is incompatibility between different date formats. Sometimes, the month is a word, sometimes it’s a number. The standard for order of year, month and day is different in one country than it is in another.</p>
+
+<p>When month is a number and it’s 12 or lower, we can confuse it with day number and not be able to verify which is which. One month has 30 days, another has 31. April has 28 days… but only 3 years out of 4. All that needs to be taken into consideration when dealing with dates.</p>
+
+<p>To alleviate the pain from some of those problems, ISO 8601 was introduced. It is an international standard, an exact way of writing date and time so that there is no confusion.</p>
+
+<p>Having all dates in one format is important for one’s own projects. When they are always written the same, there is no need to convert anything, they are compatible with each other for future use by default.</p>
+
+<p>It is also important externally. When someone else needs to process them, there is no need to verify what is what, to format string to make it compatible with another company’s own internal formatting standard.</p>
+
+<p>Choosing ISO 8601 is also very convenient for the programmer. Most frameworks, modules etc. that deal with dates use it as the default standard and force the user to first convert the input data string to ISO 8601 before further processing. Such is the case with SQLite, Pandas, Django and many more.</p>
+
+<p>It is always the best practice to try to stick to one data formatting standard whenever possible. And since ISO 8601 is the most popular standard for date formatting in the world, it is most convenient to stick to it. It makes our dates most compatible with other dates “out there”, saving us from many potential headaches in the future.</p>
+
+<p><br /></p>
+<h2 id="what-needs-does-this-converter-address">What needs does this converter address?</h2>
+
+<p>Unfortunately, there is no one correct way to write a converter. It all depends on which context it needs to be used, and based on that, the optimal behavior can be different.</p>
+
+<p>For example, in some cases it is crucial that failure to convert produces an error and instantly stops the program from running to not pollute the data with pseudo-dates, or empty strings which have to be addressed quickly not to break something else.</p>
+
+<p>Another time, it is mandatory that the service continues working and error is handled silently and gracefully. There is no right or wrong way to write it, it’s all context-dependent.</p>
+
+<p>The converter function below behaves like so:</p>
+<ul>
+  <li>deals just with date, not date and time</li>
+  <li>does not require hint parameters to know the format, it tries to guess which is which</li>
+  <li>it returns None on failure, does not break whatever’s running it</li>
+  <li>when month and day are both numbers, it assumes that month is always the digit on the left side, and day on the right</li>
+  <li>the year is always a four-digit number</li>
+  <li>the month can be either a number, or a word</li>
+  <li>a day can be either a one-digit number or a two-digit number</li>
+  <li>there can be no day, but month and year both have to be present</li>
+</ul>
+
+<p>Make sure that a converter you need meets all the criteria above, or that you have fixes for when it doesn’t.</p>
+
+<p>Below I break apart the code. If you just want the entire thing to copy-paste, click <a href="#full_code">here</a>.</p>
+
+<p><br /></p>
+<h2 id="code-breakdown">Code breakdown</h2>
+
+<p>The converter is best written as a function, convenient to keep in a separate python helper file and imported as needed. It takes a date, ie. a string hopefully containing all the ingredients we need.</p>
+<blockquote>
+  <p>def toiso8601(date):</p>
+</blockquote>
+
+<p>First, we write a sub-function that converts a month, written as a word, to a number (still written as string). This sequence can be potentially executed twice in our code, so there is no point repeating the whole thing. Instead, we make a function of it and call it when needed.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">def</span> <span class="nf">month_to_digit</span><span class="p">(</span><span class="n">month_as_word</span><span class="p">):</span>
+		<span class="n">months_full</span> <span class="o">=</span> <span class="p">{</span><span class="s">'january'</span><span class="p">:</span><span class="s">'01'</span><span class="p">,</span> <span class="s">'february'</span><span class="p">:</span><span class="s">'02'</span><span class="p">,</span> <span class="s">'march'</span><span class="p">:</span><span class="s">'03'</span><span class="p">,</span> <span class="s">'april'</span><span class="p">:</span><span class="s">'04'</span><span class="p">,</span> <span class="s">'may'</span><span class="p">:</span><span class="s">'05'</span><span class="p">,</span> <span class="s">'june'</span><span class="p">:</span><span class="s">'06'</span><span class="p">,</span> <span class="s">'july'</span><span class="p">:</span><span class="s">'07'</span><span class="p">,</span> <span class="s">'august'</span><span class="p">:</span><span class="s">'08'</span><span class="p">,</span> <span class="s">'september'</span><span class="p">:</span><span class="s">'09'</span><span class="p">,</span> <span class="s">'october'</span><span class="p">:</span><span class="s">'10'</span><span class="p">,</span> <span class="s">'november'</span><span class="p">:</span><span class="s">'11'</span><span class="p">,</span> <span class="s">'december'</span><span class="p">:</span><span class="s">'12'</span><span class="p">}</span>
+		<span class="n">months</span> <span class="o">=</span> <span class="p">{</span><span class="s">'jan'</span><span class="p">:</span><span class="s">'01'</span><span class="p">,</span> <span class="s">'feb'</span><span class="p">:</span><span class="s">'02'</span><span class="p">,</span> <span class="s">'mar'</span><span class="p">:</span><span class="s">'03'</span><span class="p">,</span> <span class="s">'apr'</span><span class="p">:</span><span class="s">'04'</span><span class="p">,</span> <span class="s">'may'</span><span class="p">:</span><span class="s">'05'</span><span class="p">,</span> <span class="s">'jun'</span><span class="p">:</span><span class="s">'06'</span><span class="p">,</span> <span class="s">'jul'</span><span class="p">:</span><span class="s">'07'</span><span class="p">,</span> <span class="s">'aug'</span><span class="p">:</span><span class="s">'08'</span><span class="p">,</span> <span class="s">'sep'</span><span class="p">:</span><span class="s">'09'</span><span class="p">,</span> <span class="s">'oct'</span><span class="p">:</span><span class="s">'10'</span><span class="p">,</span> <span class="s">'nov'</span><span class="p">:</span><span class="s">'11'</span><span class="p">,</span> <span class="s">'dec'</span><span class="p">:</span><span class="s">'12'</span><span class="p">}</span>
+		<span class="n">month_as_word</span> <span class="o">=</span> <span class="n">month_as_word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">month_as_word</span> <span class="ow">in</span> <span class="n">months_full</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">month_final</span> <span class="o">=</span> <span class="n">months_full</span><span class="p">[</span><span class="n">month_as_word</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">month_as_word</span> <span class="ow">in</span> <span class="n">months</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">month_final</span> <span class="o">=</span> <span class="n">months</span><span class="p">[</span><span class="n">month_as_word</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">'ERROR: not a valid date. month word unknown'</span><span class="p">)</span>
+			<span class="n">month_final</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">return</span> <span class="n">month_final</span></code></pre></figure>
+
+<p>There are two types of month words popular in writing dates in English. The first one is full words, the second the first 3 letters of each word. In ISO 8601, month is a two-digit number. And so we have to convert.</p>
+
+<p>For that, we have two dictionaries, one for each type. The keys are the month-words, the values are numbers to which they convert. Alternative is to create one dictionary and test for full name against full key name, or for first three letters of the parsed string against the first three letters of each dictionary key, saving us from the need to create the second dictionary.</p>
+
+<p>Notice that the numbers are in quotes. They are strings, first because ‘03’ is not a number understandable by Python, second because the entire process is taking string input and outputting another string. There is no reason to switch to any other data type at any point, as sooner or later it would have to be converted back into a string.</p>
+
+<p>If conversion fails (ie. the word doesn’t match a month name in either dictionary), we set month_final to None. At the end of our function, we make a condition that year, month and day all have to be set and only then do we generate and return the final date. Otherwise, we’d let some gibberish word posing as month pass through to the final string.</p>
+
+<p>There is no ISO 8601 date without a year, and setting it to some default is a risky business. You could, for example, decide to go with ‘0000’. If such year has no reasons to exist in our data (let’s say we have a movie database), setting it to such would conform to the ISO 8601 standard while giving us a valuable information that that particular piece of data is missing. In some datasets, the data has to exist, even if our database tool of choice allows setting datetime fields to be empty. This would force us to use a solution like that.</p>
+
+<p>Since for my usecase it’s not a problem, if a four-digit number indicating year is not found, the function informs about the problem, returns None and that’s the end of it.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="n">year</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">'</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d'</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">year</span><span class="p">:</span>
+		<span class="k">print</span><span class="p">(</span><span class="s">'ERROR: not a valid date. year missing'</span><span class="p">)</span>
+		<span class="k">return</span> <span class="bp">None</span>
+	<span class="n">year</span> <span class="o">=</span> <span class="n">year</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></code></pre></figure>
+
+<p>The last line of that chunk of code extracts the string from a regex object. If we had it done earlier (not knowing if regex found anything), pointing to a non-existing item would throw an error. That behavior we do not want, as it would force us to use it inside a ‘try’ clause.</p>
+
+<p>After setting up a year variable, we now need to delete this number from the date string and only seek in that new variable. Otherwise, it would extract sub-numbers from it as potential month and day numbers.
+	date_no_year = re.sub(year, ‘’, date)</p>
+
+<p>Then, we proceed to look inside that newly cut string for a word indicating month and as many sets of digits as we can find. The combination of these two findings are the base for our final assessments on what data we have and how to process it.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="n">month_day</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">'</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d?'</span><span class="p">,</span> <span class="n">date_no_year</span><span class="p">)</span>
+	<span class="n">month_word</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">'[A-Za-z]{3,}'</span><span class="p">,</span> <span class="n">date_no_year</span><span class="p">)</span></code></pre></figure>
+
+<p>For that, we use regex module’s ‘findall’ and ‘search’ functions. Both month and day can be a single, or a double-width string (hence ‘?’ by the second one, meaning “0 or 1 of it”). Month words only contains letters and all the words in both dictionaries are of 3+ length. ‘{3,}’ means “minimum 3, maximum unspecified, so equal or higher than 3”.</p>
+
+<p>Being specific here is important. If someone would surprise our converter with a peculiar date, like 1969x05x20, our function would still work and omit ‘x’ separators, as they are only of length 1. Not demanding three or more letters in a word, those x-es would be added needlessly as separate ‘month or day’ items and cause the script to fail to fullfill its duty and return None.</p>
+
+<p>Now we get into different scenarios.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">if</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">month_day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">month</span> <span class="o">=</span> <span class="n">month_to_digit</span><span class="p">(</span><span class="n">month_word</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">day</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">day</span> <span class="o">=</span> <span class="s">'0'</span> <span class="o">+</span> <span class="n">day</span></code></pre></figure>
+
+<p>First is the case of month being a word (as in containing letters, not in regex sense, where digits also qualify as words) and month_day search returning only one object. If we have a year, some word and some digit, it is safe to assume that the word is a month and the digit is a day. So we set up both variables, giving us a first potential complete set of year, month and day variables.</p>
+
+<p>The last two lines are important. ISO 8601 does not accept single-digit numbers, neither for date nor for time. If the input format is ‘Sep 1, 1995’, the day needs ‘0’ in front of 1.</p>
+
+<p>Because strings are iterable in Python, it is very easy to check for its length and if it’s 1 (which means the number is most likely 1-9 with no 0 in front), we add it and the day variable is complete.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">elif</span> <span class="ow">not</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">month_day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">month</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">day</span> <span class="o">=</span> <span class="s">'01'</span></code></pre></figure>
+
+<p>The first alternative check is for no word indicating month and just a single digit found. In most cases, when we only have a year and a single number, that single number is a month. Nobody writes year and day of a month that is not specified.</p>
+
+<p>In rare cases, this extra number means day of year. This converter is not equipped to deal with such scenario and if it is indeed what you have to deal with, you’d have to use Python’s datetime module to convert it to a final date. It is easily achievable once you know this primary tool for dealing with dates in Python.</p>
+
+<p>In many scenarios, when the day is not found, we might want the whole date to be invalid. For my use, I still need the date, which is only used for getting approximate guesses to another object with another date (the ones with smallest timedelta between them being paired), so few days off are much less hurtful than not having a date at all.</p>
+
+<p>If you want to not return any date if the day is missing, it is easy to change in this function. Because the final date generation will fail if any of the date elements is not set, all you have to do is change “day = ‘01’” to “day = None” in two places.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">elif</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">month_day</span><span class="p">:</span>
+		<span class="n">month</span> <span class="o">=</span> <span class="n">month_to_digit</span><span class="p">(</span><span class="n">month_word</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">day</span> <span class="o">=</span> <span class="s">'01'</span></code></pre></figure>
+
+<p>Next is a straightforward case, where we have a word for month, but no extra number that would represent a day. Here, again we blindly set the day to first of the month.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">elif</span> <span class="ow">not</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">month_day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+		<span class="n">month</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">day</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">day</span> <span class="o">=</span> <span class="s">'0'</span> <span class="o">+</span> <span class="n">day</span></code></pre></figure>
+
+<p>Lack of a word representing month and two sets of digits indicates both month and day being numbers. Like mentioned in the function summary, this part assumes month number being to the left of day number. You can reverse this order by setting month to month_day[1] and day to month_day[0].</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">else</span><span class="p">:</span>
+		<span class="k">print</span><span class="p">(</span><span class="s">'ERROR: not a valid date'</span><span class="p">)</span>
+		<span class="n">year</span> <span class="o">=</span> <span class="bp">None</span></code></pre></figure>
+
+<p>Finally, we write what to do if all our previous conditions failed. If we got to it, this means that either of these is true:</p>
+<ul>
+  <li>word representing month was not found and regex was not able to fetch any numbers from string, leaving us with no data to work with</li>
+  <li>besides year, there were more than two other numbers</li>
+</ul>
+
+<p>Three digits make it impossible to assess which one is month and which one is day. Usually, it means that the string we got is not date at all, or date with some unfortunate extra luggage.</p>
+
+<p>One way or the other, under this circumstance it is best to not play wild guesses and instead call it quits. Print will inform us about the problem in a terminal window. Setting year to None will make the final condition fail, as it tests for the presence of year, month and day. ‘None’ is faulty in Python, it indicates failure, and so the condition is not met.</p>
+
+<p>The final piece of our code checks for the presence of all objects and constructs a string from it.</p>
+
+<p>The last return is silent and applies only when that condition is not met. Every function in Python returns None, if not specified elsewhere. Here, we want to return date, but only if we have all the ingredients. If not, there are no final return instructions, which means the function will return ‘None’.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">if</span> <span class="n">year</span> <span class="ow">and</span> <span class="n">month</span> <span class="ow">and</span> <span class="n">day</span><span class="p">:</span>
+		<span class="n">final_date</span> <span class="o">=</span> <span class="n">f</span><span class="s">'{year}-{month}-{day}'</span>
+		<span class="k">return</span> <span class="n">final_date</span></code></pre></figure>
+
+<p>In other words, the final lines could be more redundantly written this way:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="k">if</span> <span class="n">year</span> <span class="ow">and</span> <span class="n">month</span> <span class="ow">and</span> <span class="n">day</span><span class="p">:</span>
+		<span class="n">final_date</span> <span class="o">=</span> <span class="n">f</span><span class="s">'{year}-{month}-{day}'</span>
+		<span class="k">return</span> <span class="n">final_date</span>
+	<span class="k">return</span> <span class="bp">None</span></code></pre></figure>
+
+<p>First return reached instantly ends the function, and so it reaches ‘return None’ only if year, word and month are not set to anything truthy.</p>
+
+<p><br />
+And here is the entire code:<a id="full_code"></a></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">	<span class="kn">import</span> <span class="nn">re</span>
+	<span class="k">def</span> <span class="nf">toiso8601</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+		<span class="k">def</span> <span class="nf">month_to_digit</span><span class="p">(</span><span class="n">month_as_word</span><span class="p">):</span>
+			<span class="n">months_full</span> <span class="o">=</span> <span class="p">{</span><span class="s">'january'</span><span class="p">:</span><span class="s">'01'</span><span class="p">,</span> <span class="s">'february'</span><span class="p">:</span><span class="s">'02'</span><span class="p">,</span> <span class="s">'march'</span><span class="p">:</span><span class="s">'03'</span><span class="p">,</span> <span class="s">'april'</span><span class="p">:</span><span class="s">'04'</span><span class="p">,</span> <span class="s">'may'</span><span class="p">:</span><span class="s">'05'</span><span class="p">,</span> <span class="s">'june'</span><span class="p">:</span><span class="s">'06'</span><span class="p">,</span> <span class="s">'july'</span><span class="p">:</span><span class="s">'07'</span><span class="p">,</span> <span class="s">'august'</span><span class="p">:</span><span class="s">'08'</span><span class="p">,</span> <span class="s">'september'</span><span class="p">:</span><span class="s">'09'</span><span class="p">,</span> <span class="s">'october'</span><span class="p">:</span><span class="s">'10'</span><span class="p">,</span> <span class="s">'november'</span><span class="p">:</span><span class="s">'11'</span><span class="p">,</span> <span class="s">'december'</span><span class="p">:</span><span class="s">'12'</span><span class="p">}</span>
+			<span class="n">months</span> <span class="o">=</span> <span class="p">{</span><span class="s">'jan'</span><span class="p">:</span><span class="s">'01'</span><span class="p">,</span> <span class="s">'feb'</span><span class="p">:</span><span class="s">'02'</span><span class="p">,</span> <span class="s">'mar'</span><span class="p">:</span><span class="s">'03'</span><span class="p">,</span> <span class="s">'apr'</span><span class="p">:</span><span class="s">'04'</span><span class="p">,</span> <span class="s">'may'</span><span class="p">:</span><span class="s">'05'</span><span class="p">,</span> <span class="s">'jun'</span><span class="p">:</span><span class="s">'06'</span><span class="p">,</span> <span class="s">'jul'</span><span class="p">:</span><span class="s">'07'</span><span class="p">,</span> <span class="s">'aug'</span><span class="p">:</span><span class="s">'08'</span><span class="p">,</span> <span class="s">'sep'</span><span class="p">:</span><span class="s">'09'</span><span class="p">,</span> <span class="s">'oct'</span><span class="p">:</span><span class="s">'10'</span><span class="p">,</span> <span class="s">'nov'</span><span class="p">:</span><span class="s">'11'</span><span class="p">,</span> <span class="s">'dec'</span><span class="p">:</span><span class="s">'12'</span><span class="p">}</span>
+			<span class="n">month_as_word</span> <span class="o">=</span> <span class="n">month_as_word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">month_as_word</span> <span class="ow">in</span> <span class="n">months_full</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="n">month_final</span> <span class="o">=</span> <span class="n">months_full</span><span class="p">[</span><span class="n">month_as_word</span><span class="p">]</span>
+			<span class="k">elif</span> <span class="n">month_as_word</span> <span class="ow">in</span> <span class="n">months</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="n">month_final</span> <span class="o">=</span> <span class="n">months</span><span class="p">[</span><span class="n">month_as_word</span><span class="p">]</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">print</span><span class="p">(</span><span class="s">'ERROR: not a valid date. month word unknown'</span><span class="p">)</span>
+				<span class="n">month_final</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="k">return</span> <span class="n">month_final</span>
+
+		<span class="n">year</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">'</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d'</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">year</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">'ERROR: not a valid date. year missing'</span><span class="p">)</span>
+			<span class="k">return</span> <span class="bp">None</span>
+		<span class="n">year</span> <span class="o">=</span> <span class="n">year</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+		<span class="n">date_no_year</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="s">''</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+
+		<span class="n">month_day</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">'</span><span class="err">\</span><span class="s">d</span><span class="err">\</span><span class="s">d?'</span><span class="p">,</span> <span class="n">date_no_year</span><span class="p">)</span>
+		<span class="n">month_word</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">'[A-Za-z]{3,}'</span><span class="p">,</span> <span class="n">date_no_year</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">month_day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">month</span> <span class="o">=</span> <span class="n">month_to_digit</span><span class="p">(</span><span class="n">month_word</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="n">day</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">day</span> <span class="o">=</span> <span class="s">'0'</span> <span class="o">+</span> <span class="n">day</span>
+		<span class="k">elif</span> <span class="ow">not</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">month_day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">month</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">day</span> <span class="o">=</span> <span class="s">'01'</span>
+		<span class="k">elif</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">month_day</span><span class="p">:</span>
+			<span class="n">month</span> <span class="o">=</span> <span class="n">month_to_digit</span><span class="p">(</span><span class="n">month_word</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="n">day</span> <span class="o">=</span> <span class="s">'01'</span>
+		<span class="k">elif</span> <span class="ow">not</span> <span class="n">month_word</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">month_day</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="n">month</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">day</span> <span class="o">=</span> <span class="n">month_day</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">'ERROR: not a valid date'</span><span class="p">)</span>
+			<span class="n">year</span> <span class="o">=</span> <span class="bp">None</span>
+
+		<span class="k">if</span> <span class="n">year</span> <span class="ow">and</span> <span class="n">month</span> <span class="ow">and</span> <span class="n">day</span><span class="p">:</span>
+			<span class="n">final_date</span> <span class="o">=</span> <span class="n">f</span><span class="s">'{year}-{month}-{day}'</span>
+			<span class="k">return</span> <span class="n">final_date</span></code></pre></figure>
+
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Keyboard Nest</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>Keyboard Nest</li>
+          <li><a href="mailto:call911@pm.me">call911@pm.me</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/chris-bz"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">chris-bz</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
