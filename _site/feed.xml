@@ -3,10 +3,10 @@
   <channel>
     <title>Keyboard Nest</title>
     <description>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</description>
-    <link>http://yourdomain.com/</link>
-    <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 09 Sep 2020 18:17:29 +0200</pubDate>
-    <lastBuildDate>Wed, 09 Sep 2020 18:17:29 +0200</lastBuildDate>
+    <link>https://chris-bz.github.io/</link>
+    <atom:link href="https://chris-bz.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sat, 12 Sep 2020 20:56:16 +0200</pubDate>
+    <lastBuildDate>Sat, 12 Sep 2020 20:56:16 +0200</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
@@ -235,8 +235,8 @@ And here is the entire code:&lt;a id=&quot;full_code&quot;&gt;&lt;/a&gt;&lt;/p&g
 
 </description>
         <pubDate>Mon, 07 Sep 2020 11:53:01 +0200</pubDate>
-        <link>http://yourdomain.com/python/2020/09/07/converting-date-to-iso8601-in-python.html</link>
-        <guid isPermaLink="true">http://yourdomain.com/python/2020/09/07/converting-date-to-iso8601-in-python.html</guid>
+        <link>https://chris-bz.github.io/python/2020/09/07/converting-date-to-iso8601-in-python.html</link>
+        <guid isPermaLink="true">https://chris-bz.github.io/python/2020/09/07/converting-date-to-iso8601-in-python.html</guid>
         
         
         <category>python</category>
@@ -445,13 +445,337 @@ installed on: Linux Mint 19&lt;/p&gt;
 &lt;p&gt;Unfortunately, for me each one of those is a dealbreaker, and all together make CMUS unarmed for daily use.&lt;/p&gt;
 </description>
         <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
-        <link>http://yourdomain.com/program/reviews/2020/09/01/cmus-music-player-review.html</link>
-        <guid isPermaLink="true">http://yourdomain.com/program/reviews/2020/09/01/cmus-music-player-review.html</guid>
+        <link>https://chris-bz.github.io/program/reviews/2020/09/01/cmus-music-player-review.html</link>
+        <guid isPermaLink="true">https://chris-bz.github.io/program/reviews/2020/09/01/cmus-music-player-review.html</guid>
         
         
         <category>program</category>
         
         <category>reviews</category>
+        
+      </item>
+    
+      <item>
+        <title>Ranger configuration extras</title>
+        <description>&lt;p&gt;Ranger is probably the single most powerful file manager application on any operating system.&lt;/p&gt;
+
+&lt;p&gt;It can be customized to the point of practically being a system wide remote, one tool that can do anything. In this regard, it’s a very neat extension of command line in Linux.&lt;/p&gt;
+
+&lt;p&gt;Because of that, almost every Ranger config file I’ve stumbled upon contains at least an interesting line or two. I’ve used the application for few years already, but feel like there’s a lot that still needs attention. Like, for example, a convenient way of dealing with archives of all sorts, or different file information views, depending on a particular need.&lt;/p&gt;
+
+&lt;p&gt;Below are some of my favorite additions to the rc.conf file. You can usually find it in ~/.config/ranger/ folder. If it’s not there, run this command in command line: ‘ranger –copy-config=all’, which should create it.&lt;/p&gt;
+
+&lt;p&gt;Just paste the quoted lines wherever you see fit inside that file, but keep in mind that some of those commands invoke programs you will have to install.&lt;/p&gt;
+
+&lt;h3 id=&quot;keyboard-layout-change&quot;&gt;Keyboard layout change&lt;/h3&gt;
+
+&lt;p&gt;Using alternative keyboard layouts can be very painful for that person’s friends and family. If they sometimes need to operate on this person’s machine, after each session they might hate that person a little bit more.&lt;/p&gt;
+
+&lt;p&gt;Dvorak and Colemak are the unsung heroes of filesystem encryption, making all attempts to search Youtube, finding something out on Google etc. fruitless, unless someone’s brain knows the layout. Even with keycaps being changed accordingly.&lt;/p&gt;
+
+&lt;p&gt;In order to help those poor people, we can set up easy keyboard layout change to and from basic qwerty US layout to any we want. For that, we need to install setxkbmap with our package manager. For Ubuntu users, the command to paste in command line is:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;sudo apt-get install setxkbmap&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Then, insert these two lines to rc.conf:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map Ku shell setxkbmap -variant ,us&lt;br /&gt;
+map Kc shell setxkbmap -variant colemak&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;‘Ku’ and “Kc’ are my key combinations. You can set them to whatever you have unmapped. Then you need to restart Ranger and whenever you want to change the layout, you just use those key combinations.&lt;/p&gt;
+
+&lt;h1 id=&quot;mp3-file-tag-preview&quot;&gt;MP3 file tag preview&lt;/h1&gt;
+
+&lt;p&gt;Sometimes, it is convenient to check the content of an mp3 tag. For example, a track we have on hard drive might just have artist and title in its filename, but we want to quickly check from which album it is, or which year it was released.&lt;/p&gt;
+
+&lt;p&gt;Opening a browser for a Rate Your Music/Discogs/etc. check might take longer than getting to our music directory, quickly locating that file and… pressing a key to see its tag contents.&lt;/p&gt;
+
+&lt;p&gt;For that, we’re going to need a CLI tag viewer. I highly recommend eyeD3, available both as a CLI app and importable Python library. So, first in command line:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;sudo apt install eyed3&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;And in Ranger config file:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map T shell clear; eyeD3 %s; read -p “———-press ENTER to continue———–”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;We are making a 3-step operation here:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;clear terminal window, so that tag information can be the only thing displayed, so we don’t have to strain our eyes looking for it&lt;/li&gt;
+  &lt;li&gt;pass selected file(s) to eyeD3 for tag preview&lt;/li&gt;
+  &lt;li&gt;using read to display some information&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We need step 3, read with -p option (prompt). It waits for user input, enabling us to view the tag before coming back to Ranger.&lt;/p&gt;
+
+&lt;p&gt;Otherwise, we’d have to quit Ranger, display tag and have to start it again manually. Without the ‘-p’ option, Ranger would display tag information and then instantly come back, requiring photographic memory coupled with Spiderman instincts to pick up the information we want. It would only be visible for fracture of a second.&lt;/p&gt;
+
+&lt;p&gt;Notice that you can select multiple desired files, just like you normally mark them for operations in Ranger, and for each of them, tag information will be displayed in vertical order. Very handy.&lt;/p&gt;
+
+&lt;h1 id=&quot;mp3-player-playback-control&quot;&gt;MP3 player playback control&lt;/h1&gt;
+
+&lt;p&gt;In my opinion, it is much better to have a system-wide playback control shortcuts, than narrowing it down to a specific application. This way, we can change tracks while the monitor is off and never have to worry about what’s focused. Even if we spend large majority of time in our file manager.&lt;/p&gt;
+
+&lt;p&gt;If you don’t have any free system-wide available key combinations for that porpuse, you can let Ranger do the ordering. So long as your music player accepts playback commands from terminal session (if it doesn’t, you need to change your music player).&lt;/p&gt;
+
+&lt;p&gt;Ordering player to start playback of hovered/selected file(s) is as simple as setting up your default music application in Ranger’s rifle.conf file. But maybe we want to enqueue instead of play?&lt;/p&gt;
+
+&lt;p&gt;In this case, we have to check what playback control commands particular player accepts. Most applications will give such information when starting it up from terminal window with ‘ -h’ (short for ‘help’) added at the end.&lt;/p&gt;
+
+&lt;p&gt;In DeadBeef, enqueing is done with ‘–queue’ parameter. Entire command looks like this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map de chain shell deadbeef –queue %s; mark_files all=True val=False&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You need to replace it with your player of choice and its equivalent command (which might very well be exactly the same).&lt;/p&gt;
+
+&lt;p&gt;The second part is also important. Ranger has a nasty habit of leaving selection after operation and no way to change that behavior, as far as I know. There is an option to drop all selections when leaving folder, but it doesn’t work on my computer.&lt;/p&gt;
+
+&lt;p&gt;It is not a problem, because we can slap the above ‘mark_files’ command whenever we want to unselect after an operation and skip it whenever we don’t, giving us full control.&lt;/p&gt;
+
+&lt;h1 id=&quot;starting-twitch-streams&quot;&gt;Starting Twitch streams&lt;/h1&gt;
+
+&lt;p&gt;Youtube-dl is a great tool to download Youtube videos, but it can also be used in concert with MPV to play its videos, or playback Twitch streams.&lt;/p&gt;
+
+&lt;p&gt;For that, we of course first need to both have MPV and youtube-dl installed. Then, it’s as simple as adding one line for each stream to rc.conf:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map qan shell killall mpv; mpv https://www.twitch.tv/boxerpete &amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;First part is optional and it kills all mpv instances. Since I want to play a stream now, first I want to end playback if something is on already, as I’m not gonna watch two things at once.&lt;/p&gt;
+
+&lt;p&gt;Then we start MPV with Twitch streamer url address. The player automatically invokes youtube-dl and begins stream playback.&lt;/p&gt;
+
+&lt;p&gt;In order not to freeze Ranger until stream playback is finished, which could be in 23 hours and 59 minutes in case of a 24-hour stream, we need to order it to start as separate process, hence line ending.&lt;/p&gt;
+
+&lt;p&gt;Or are you like me and sometimes watch beautiful places on webcams while working, to cheat yourself that you’re not sitting inside dark cave until the work is done?&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map qge shell mpv https://www.youtube.com/watch?v=yMSc-qqW3To –no-audio –no-resume-playback &amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;open-with&quot;&gt;Open with…&lt;/h1&gt;
+
+&lt;p&gt;Default applications often don’t meet all our requirements for file handling. We might be using one application for default action, but also need another option for marginal cases.&lt;/p&gt;
+
+&lt;p&gt;Take images, for example. For casual users, default action could be to open them in image viewer. Sometimes, we might need to edit them, carve something out and send it to someone? It’s good to prepare for such cases:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map wp shell pinta %s&amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Pinta is a simple image editor for Linux. It is an equivalent of the old Paint Shop Pro on Windows, back before Corel bought them.&lt;/p&gt;
+
+&lt;p&gt;For simple modifications like slicing particular areas out of an image, there is no point to start any graphical powerhouse, as we’d waste a lot of time looking at loading screen while the program computes stuff we will not need.&lt;/p&gt;
+
+&lt;p&gt;Maybe I need to open file in an editor I’m not using daily:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map us shell subl %s; xdotool key super+e&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Sublime Text spawns separate process by default, so it doesn’t require command ending to make it to. I am using an xdotool program to press a system-wide i3 keyboard shortcut to focus that application. After all, when I open something for edition, the next thing I most often want is to start editing it.&lt;/p&gt;
+
+&lt;p&gt;Another use is to start program with a specified geometry. I want to start MPV player, but want it on my second 4:3 monitor:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map uv shell mpv –geometry=1280x1024+1920+0 %s&amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;We could add ‘–fs’ before sending output to /dev/null to also start the program in full screen, but my experience is that it’s bugged and sometimes fullscreens on first monitor, sometimes on second.&lt;/p&gt;
+
+&lt;p&gt;Omitting it and specifying geometry is successful 100% of the time and there is no practical difference. It can be annoying if someone often click-drags the player window by accident (fullscreen prevents moving window around). But in this case it’s just better to disable, with the exception of someone using mouse and click-dragging MPV window by accident. If that is your problem, just add this line to your mpv.conf:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;no-window-dragging&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
+        <link>https://chris-bz.github.io/programs/2020/09/01/ranger-configuration-extras.html</link>
+        <guid isPermaLink="true">https://chris-bz.github.io/programs/2020/09/01/ranger-configuration-extras.html</guid>
+        
+        
+        <category>programs</category>
+        
+      </item>
+    
+      <item>
+        <title>Setting up single navigation pane in Ranger and why it&#39;s a good idea</title>
+        <description>&lt;p&gt;By default, Ranger starts in 3-pane view, which makes it unique, but not very practical. Fortunately, this can be easily changed.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;If you want to skip past gibberish and straight to solution, click &lt;a href=&quot;#solution&quot;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;For many years, I was using Total Commander (best file manager on Windows, or used to be one at least). Maximized, I had classical two-pane design. One day, after buying my first full HD monitor, I opened the program and realized how insane amount of space I am losing by having that second pane. Half of my screen space, to be precise.&lt;/p&gt;
+
+&lt;p&gt;The truth is, in that classical Norton Commander design, half screen is a glorified directory link. Yes, it can be used to compare folders, to get a broader multi-directory view which can help to make sense of things.&lt;/p&gt;
+
+&lt;p&gt;But those are situational. Most of the time, one pane is important, the other just points where to copy, move, from where to copy or move. It is a waste of space.&lt;/p&gt;
+
+&lt;p&gt;If reference is indeed its main purpose, the second pane might as well have a vertical split option and just hold stackable directory paths, with pre-selected modifier+randomly chosen key generated for each one to allow operations to/from these.&lt;/p&gt;
+
+&lt;p&gt;This would be a very good use of space and a real lifesaver when working on projects with complex directory structures. But one link taking half of screen estate?&lt;/p&gt;
+
+&lt;p&gt;This isn’t a problem only if someone is used to have maximized applications and alt+tabs between them. Plenty of that space will be wasted in most programs, but that won’t matter anyway since we decide to focus one thing at the time. For many people, having multiple things at once makes them bleed attention. That’s why distraction-free modes in editors are popular.&lt;/p&gt;
+
+&lt;p&gt;I often do multiple things at once and so I’d rather have them next to each other to be able to compare, rewrite code snippets etc.. Often, I have to run different scripts at once and need to see how they perform. And so every bit of space is important.&lt;/p&gt;
+
+&lt;p&gt;That’s why after switching to Linux few years back, I decided to look for file manager that would just have one pane… end ended up using the one that has three!&lt;/p&gt;
+
+&lt;p&gt;In Ranger’s default view, parent directory, which is always one keypress away, takes one third of space. Another shows sub-directory. How often is that actually useful?&lt;/p&gt;
+
+&lt;p&gt;Some of the most advanced ‘navigators’ I’ve met just use command line for their daily routines. They get zero information even about the current directory when navigating, and yet not only they can function, but they are absurdly fast with their operations.&lt;/p&gt;
+
+&lt;p&gt;Even when we actually need to scan subfolder for presence of file or two, doing a recursive search will be much faster and much less eye-straining. A view of multiple directories at once is a gimmick, something that is there probably because it makes the program stand out from the crowd.&lt;/p&gt;
+
+&lt;p&gt;Since I had absolutely loved Ranger from the get-go, I wasn’t going to let this spoil things. Even if there would be no option to change it, I would probably stick to it still. And fortunately, this is not the case.&lt;/p&gt;
+
+&lt;h1 id=&quot;editing-config-file&quot;&gt;Editing config file&lt;/h1&gt;
+
+&lt;p&gt;Ranger stores configuration in two files: rc.conf (program settings, key bindings) and rifle.conf (file associations). We will be editing the first one.&lt;/p&gt;
+
+&lt;p&gt;You can find it in ~/.config/ranger directory. If it’s not there, paste this command in console and run it:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;ranger –copy-config=all&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Now both files should be there.&lt;/p&gt;
+
+&lt;p&gt;First setting command that interests us is:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;set viewmode [mode]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This command takes one of two mode arguments:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;miller: the one I mentioned, showing folder’s parent and children folder on both sides&lt;/li&gt;
+  &lt;li&gt;multipane: multiple unrelated directory views next to each other&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Multipane view puts an equation mark between tabs and panes. If there are no tabs, there is one pane. Every new tab creates a new pane, splitting the available space evenly between all displayed ones.&lt;/p&gt;
+
+&lt;p&gt;Another command compliments it:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;set column_ratios 1&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;It takes 0 to 3 arguments. Giving it 4 or more is not considered properly in code. Setting it up in config file and then starting Ranger runs it in a broken state.&lt;/p&gt;
+
+&lt;p&gt;For example, feeding it ‘1,2,1’ will set parent and child directory pane to take 50% of total window width, while the main window in which we navigate will occupy the other 50%. Keep in mind though that as of now, it only works for miller mode.&lt;/p&gt;
+
+&lt;p&gt;It would be convenient to set it to something like this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;set column_ratios 5,1&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If multipane was set, this command could only accept two argements: first one pointing to relative size of the currently focused tab, the other to all other unfocused ones.&lt;/p&gt;
+
+&lt;p&gt;In miller mode, if we only give it one value, it will just give us one column. And since the one in which we traverse directories is the only one we can’t live without, it is set to be the only one remaining in such case.&lt;/p&gt;
+
+&lt;p&gt;Notice that both setting column_ratios to 0 and not writing any number at the end will also give the same result.&lt;/p&gt;
+
+&lt;p&gt;So, if someone does not ever intend to use tabs, he might just set viewmode to multipane and be done with it, but there’s no need to do that. Today we don’t use it, maybe tomorrow we will ;) Let’s set it to miller route and set column_ratios to 1.&lt;/p&gt;
+
+&lt;p&gt;That’s not all, though. The problem arises when we hover over a file in Ranger. It’s gonna get previewed. Now, half the screen will be occupied by a file each time we encounter a previewable one. Sometimes, that’s useful, bot mostly it’s distracting.&lt;/p&gt;
+
+&lt;p&gt;The solution is to disable file previews:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;set preview_files false&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a id=&quot;solution&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Check if file rc.conf exists in path: ~/.config/ranger/. If not, paste and execute the following command: ranger –copy-config=all. Now the file should be there.&lt;/li&gt;
+  &lt;li&gt;Open it in a text editor&lt;/li&gt;
+  &lt;li&gt;Add the following lines inside it:
+    &lt;ul&gt;
+      &lt;li&gt;set viewmode miller&lt;/li&gt;
+      &lt;li&gt;set column_ratios 1&lt;/li&gt;
+      &lt;li&gt;set preview_files false&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;but-why-cripple-myself-with-one-pane-when-i-can-have-more&quot;&gt;But why cripple myself with one pane when I can have more?&lt;/h2&gt;
+
+&lt;p&gt;If removing two panes will leave the user with empty space that he does not intend to populate in any way, it might be better to leave default 3 panes on (unless the extra ones are distracting).&lt;/p&gt;
+
+&lt;p&gt;Even for people that don’t get much use from them but are used to having them always on, it can feel like the navigation is now crippled.&lt;/p&gt;
+
+&lt;p&gt;Don’t fret, though. First of all, we have tabs. Switching between them requires single keystroke.&lt;/p&gt;
+
+&lt;p&gt;For copying files/directories, popular approach is to:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;change path to the destination directory&lt;/li&gt;
+  &lt;li&gt;open a new tab&lt;/li&gt;
+  &lt;li&gt;go to some directory&lt;/li&gt;
+  &lt;li&gt;select some objects&lt;/li&gt;
+  &lt;li&gt;yank/copy them&lt;/li&gt;
+  &lt;li&gt;close tab&lt;/li&gt;
+  &lt;li&gt;paste&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Or reverse it if the file source directory and not destination directory is where we want to do some next thing.&lt;/p&gt;
+
+&lt;p&gt;It takes the same amount of keystrokes to complete as doing that operation while jumping between panes. We just jump between tabs instead of panes. We lose visibility of a reference folder entire time, but require half the program space to complete it.&lt;/p&gt;
+
+&lt;p&gt;For diff purposes, tabbing is great too. We can, for example, check some potentially modified project folder against backup of the same content and switch between them to quickly see if there are some differences in files. As they take turns in occupying same space, it will be easier to notice differences.&lt;/p&gt;
+
+&lt;p&gt;There are better solutions for scenarios like that, but for a quick check, it often is convenient to do it this way.&lt;/p&gt;
+
+&lt;p&gt;Second, we can simplify things further. We move always legally downloaded movies to ‘movie’ folder, legally downloaded mp3 tracks to ‘mp3’ folder etc. Some folders receive high amount of traffic. Almost everyone has a routine.&lt;/p&gt;
+
+&lt;p&gt;Many people who despise file managers and people that use them have bash aliases to folder paths set to allow easy moving, in Ranger it is also very simple to do.&lt;/p&gt;
+
+&lt;p&gt;Ranger adopted one of Vim’s greatest tools - leader keys. No need to press a modifier key (of which there are few) and control its press and release in combination with another key to trigger some operation bound to that particular shortcut. Almost any key can lead and it doesn’t have to be kept pressed.&lt;/p&gt;
+
+&lt;p&gt;And so, we can do this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map mp shell mv %s /mnt/ssd/books/programming&lt;br /&gt;
+map mn shell mv %s /mnt/files/img/nakedpersons&lt;br /&gt;
+map ma shell mv %s /mnt/files/music/ambient&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;We select all books we want to move, then press ‘mp’ and we’re done. No need to go to any folder, open any tabs. A simple two-step operation.&lt;/p&gt;
+
+&lt;p&gt;If having two directories next to each other is a necessity at some point, nothing stops us from using terminal multiplexer. So long as we remember that two separate Ranger instances can’t pass things between them, as Ranger doesn’t start a system deamon that could move that information. Another fantastic file manager, &lt;a href=&quot;https://github.com/jarun/nnn&quot;&gt;nnn&lt;/a&gt;, has that functionality.&lt;/p&gt;
+
+&lt;p&gt;Same can be done with copying, or any other shell command that takes a list of files and does something to them. Such is an amazing flexibility of command line, and in result, of programs that allow sending some input to it for further processing, like Ranger.&lt;/p&gt;
+
+&lt;p&gt;Another fantastic tool that supercharges single-pane navigation is history. In rc.conf, we can set:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map h history_go -1&lt;br /&gt;
+map H history_go 1&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;By default, the ‘h’ key is used for navigation in Ranger, as it is in Vim. I am using Colemak keyboard layout, and so for me this key is free, which allows for a nice mnemonic binding. You can set it to any key you have available.&lt;/p&gt;
+
+&lt;p&gt;In a default config Ranger use, coming back in history will mostly go to the directory from which we came, which will be one level higher, or lower in directory structure. Moving forward will do the opposite and will, of course, only work if we already went back in history (like redo in text editors).&lt;/p&gt;
+
+&lt;p&gt;But when we have all sorts of ‘map [key(s)] cd /some/path’ shortcuts and jump between them, those two bindings become way more powerful. And we can bookmark folders on the fly as well (‘m’ saves current folder to bookmarks, tilde and ‘ keys open a list of bookmarked folders).&lt;/p&gt;
+</description>
+        <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
+        <link>https://chris-bz.github.io/programs/2020/09/01/setting-up-single-navigation-pane-in-ranger.html</link>
+        <guid isPermaLink="true">https://chris-bz.github.io/programs/2020/09/01/setting-up-single-navigation-pane-in-ranger.html</guid>
+        
+        
+        <category>programs</category>
         
       </item>
     

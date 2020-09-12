@@ -3,6 +3,9 @@ layout: page
 title: About
 permalink: /about/
 ---
+![Linux apostles crossing the Antarctic](/img/about/penguins.jpg)
+<br>
+<br>
 After failing to successfully install Linux for many years due to hardware compatibility issues, about four years ago, I finally made it. Using same OS for more than a decade was not fun. I knew Linux will surely cost me a lot of time at the beginning, but I was too curious and bored with Windows not to try.
 
 One week after fresh install and I was already in love with the system. It opened doors to modifications I had assumed would be impossible without years of experience under my belt.
@@ -11,9 +14,9 @@ On top of that, many of those modifications turned out to be extremely simple to
 
 Despite all the hardware compatibility problems still prevalent, both simplicity and flexibility of this family of operating systems is astonishing.
 
-Some of those solutions are so simple and seemingly self-explanatory that people generally don't bother to explain them. Basic usage is usually described after running a program with '--help' command. If that's not enough, 'man program' should do the trick. And if both are not sufficient, perhaps a simple Stack Exchange questions?
+Some of those solutions are so simple and seemingly self-explanatory that people generally don't bother to explain them. Basic usage is usually described after running a program with '--help' command. If that's not enough, 'man program' should do the trick. And if both are not sufficient, perhaps a simple Stack Exchange question?
 
-There are many caveats and tips that can help a lot, though. Also, Unix systems are modular in nature, ie. they have many applications serving narrow particular purposes. We can use them in concert to get very interesting behaviors.
+There are many caveats and tips that can help a lot, though. Also, Unix systems are modular in nature, they have many applications serving narrow particular purposes. We can use them in concert to get very interesting behaviors.
 
 On top of that, even very exotic wishes still cost near-zero processing power, relative to how powerful an average computer is today. We can switch our PC for near-calculator and it will still run most of the applications described here instantly, without any visible delays ever.
 

@@ -10,9 +10,9 @@ title: Keyboard Nest
 email: call911@pm.me
 description: Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: "https://chris-bz.github.io" # the base hostname & protocol for your site
 github_username:  chris-bz
 
 # Build settings
 markdown: kramdown
-theme: architect
+theme: architect-jekyll-theme
