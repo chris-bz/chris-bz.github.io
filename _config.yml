@@ -15,3 +15,5 @@ github_username:  chris-bz
 
 # Build settings
 markdown: kramdown
+
+theme: jekyll-theme-cayman
