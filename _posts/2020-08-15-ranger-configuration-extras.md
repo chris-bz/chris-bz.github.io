@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Ranger configuration extras"
-date:   2020-09-01 11:03:28 +0200
+date:   2020-08-15 11:03:28 +0200
 categories: programs
 ---
 Ranger is probably the single most powerful file manager application on any operating system.
@@ -108,9 +108,9 @@ For simple modifications like slicing particular areas out of an image, there is
 
 Maybe I need to open file in an editor I'm not using daily:
 
-> map us shell subl %s; xdotool key super+e
+> map us shell subl %s
 
-Sublime Text spawns separate process by default, so it doesn't require command ending to make it to. I am using an xdotool program to press a system-wide i3 keyboard shortcut to focus that application. After all, when I open something for edition, the next thing I most often want is to start editing it.
+Sublime Text spawns separate process by default, so it doesn't require command ending to make it to.
 
 Another use is to start program with a specified geometry. I want to start MPV player, but want it on my second 4:3 monitor:
 
