@@ -15,4 +15,4 @@ github_username:  chris-bz
 
 # Build settings
 markdown: kramdown
-theme: architect-jekyll-theme
+theme: jekyll-theme-architect
