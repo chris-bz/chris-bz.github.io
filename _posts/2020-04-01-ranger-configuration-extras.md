@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Ranger configuration extras"
-date:   2020-08-15 11:03:28 +0200
+date:   2020-04-01 22:43:18 +0200
 categories: programs
 ---
 Ranger is probably the single most powerful file manager application on any operating system.
@@ -14,7 +14,8 @@ Below are some of my favorite additions to the rc.conf file. You can usually fin
 
 Just paste the quoted lines wherever you see fit inside that file, but keep in mind that some of those commands invoke programs you will have to install.
 
-### Keyboard layout change
+<br>
+## Keyboard layout change
 
 Using alternative keyboard layouts can be very painful for that person's friends and family. If they sometimes need to operate on this person's machine, after each session they might hate that person a little bit more.
 
@@ -31,7 +32,8 @@ Then, insert these two lines to rc.conf:
 
 'Ku' and "Kc' are my key combinations. You can set them to whatever you have unmapped. Then you need to restart Ranger and whenever you want to change the layout, you just use those key combinations.
 
-# MP3 file tag preview
+<br>
+## MP3 file tag preview
 
 Sometimes, it is convenient to check the content of an mp3 tag. For example, a track we have on hard drive might just have artist and title in its filename, but we want to quickly check from which album it is, or which year it was released.
 
@@ -56,7 +58,8 @@ Otherwise, we'd have to quit Ranger, display tag and have to start it again manu
 
 Notice that you can select multiple desired files, just like you normally mark them for operations in Ranger, and for each of them, tag information will be displayed in vertical order. Very handy.
 
-# MP3 player playback control
+<br>
+## MP3 player playback control
 
 In my opinion, it is much better to have a system-wide playback control shortcuts, than narrowing it down to a specific application. This way, we can change tracks while the monitor is off and never have to worry about what's focused. Even if we spend large majority of time in our file manager.
 
@@ -76,7 +79,8 @@ The second part is also important. Ranger has a nasty habit of leaving selection
 
 It is not a problem, because we can slap the above 'mark_files' command whenever we want to unselect after an operation and skip it whenever we don't, giving us full control.
 
-# Starting Twitch streams
+<br>
+## Starting Twitch streams
 
 Youtube-dl is a great tool to download Youtube videos, but it can also be used in concert with MPV to play its videos, or playback Twitch streams.
 
@@ -94,7 +98,8 @@ Or are you like me and sometimes watch beautiful places on webcams while working
 
 > map qge shell mpv https://www.youtube.com/watch?v=yMSc-qqW3To --no-audio --no-resume-playback </dev/null &>/dev/null &
 
-# Open with...
+<br>
+## Open with...
 
 Default applications often don't meet all our requirements for file handling. We might be using one application for default action, but also need another option for marginal cases.
 

@@ -164,6 +164,10 @@ pre {
   .site-title, .site-title:visited {
     color: #424242; }
 
+.site-title img {
+  padding: 1vw 0;
+  width: 50%; }
+
 .site-nav {
   float: right;
   line-height: 56px; }

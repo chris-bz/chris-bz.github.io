@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using commands to resize programs in Linux</title>
+  <meta name="description" content="Neither Linux nor Windows remember window size and position for applications.">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://www.chrisbl.com/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html">
+  <link rel="alternate" type="application/rss+xml" title="Chris Blachewicz" href="http://www.chrisbl.com/feed.xml">
+  <link rel="shortcut icon" type="image/png" href="/favicon.png">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/"><img src="/img/logo.png" alt=""></a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Using commands to resize programs in Linux</h1>
+    <p class="post-meta"><time datetime="2020-01-14T13:45:20+01:00" itemprop="datePublished">Jan 14, 2020</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Neither Linux nor Windows remember window size and position for applications.</p>
+
+<p>Minority of programs remember dimensions and position on exit. For the rest of them, a troll is sitting inside PC case and rolls his dice. “Where should we put it this time?”.</p>
+
+<p>It is sad that something so basic and important is still largely ignored by people behind both operating systems and we have to look for separate tools to try and fix that while much less important issues take precedence.</p>
+
+<p>In this article, we will explore options to modify window sizes and positions through commands and scripts.</p>
+
+<p><br /></p>
+<h2 id="geometry">Geometry</h2>
+
+<p>Ocassionaly, Linux applications support setting geometry, which more than solves this problem, but only for those apps.</p>
+
+<p>Geometry is a special string containing four numbers:</p>
+<ul>
+  <li>window width</li>
+  <li>window height</li>
+  <li>starting position in pixels from the left screen border</li>
+  <li>starting position in pixels from the top screen border</li>
+</ul>
+
+<p>We can append this special geometry string to some programs when we start them from command line. This functionality has to be written by the developer into the app.</p>
+
+<p>There are also programs which can set any graphical window’s parameters through special commands. The below article explains both in detail.</p>
+
+<p>First two parameters decide how big the window is vertically and horizontally, the other two decide where the top-left corner of the application is on our monitor. Here’s an example:</p>
+
+<blockquote>
+  <p>1200x600+20+0</p>
+</blockquote>
+
+<p>Assuming we have a 1080p monitor, it’s exact resolution is 1920x1080. Here, the program window is being set to 1200px wide and 600px high. It will occupy a considerable amount of space on our monitor.</p>
+
+<p>The third number indicates that we want our program to be 20px from the left border of our monitor. The last one means it will start at pixel 0 from the top. In other words, there will be no space between our program’s top border and monitor’s top border.</p>
+
+<p>Notice two pluses at the end. We can either put ‘+’ or ‘-‘ in front of each of the last two numbers. Plus means ‘pixels from the left edge of the screen’, minus means ‘pixels from the right edge of the screen’.</p>
+
+<p>Sometimes it is more convenient to align our windows from the right side, so it is great that we have this flexibility.</p>
+
+<p>Of course, pixels then align towards the left side, just like when we get an order to move our piece of furniture 20cm from the right wall, we move it to the left instead of trying to demolish the wall and put it inside ;)</p>
+
+<p>Without the option to align from the right side with minuses, if we’d want to set it 20 pixels from the right, we’d have to calculate each time: current monitor resolution - (window width + 20px). It would be very obnoxious to do it.</p>
+
+<p>Not all window managers on Linux support geometry, so make sure that the one in your distribution does before starting to tinker with it. Fortunately, all the popular ones (and many less popular ones) do, so it is likely that yours does to.</p>
+
+<p>Another thing to consider is that some window managers have different window ‘states’. For example, in i3 windows can be either floating or tiling. Geometry only works for floating windows. But if you’re using a tiling window manager, you most likely do that on purpose, and so already know about that distinction.</p>
+
+<p>Like mentioned at the beginning of this article, some programs support setting it on program startup. In those cases, the magic formula almost always looks like in this shell command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mpv <span class="nt">--geometry</span><span class="o">=</span>1280x1024+1920+0 </code></pre></figure>
+
+<p>It is super useful for multi-monitor setups. Sometimes, we want to start the player on monitor one. Tutorials, we might want to watch on monitor 2, a TV show on our TV, which is set up as monitor 3.</p>
+
+<p>We can have different commands to start the same player in these different contexts, which is much more powerful than system-wide memory of last known window state (which nevertheless needs to be implemented).</p>
+
+<p><br /></p>
+<h2 id="getting-window-geometry">Getting window geometry</h2>
+
+<p>Finding out exact position and dimensions of our window does not require print-screening entire desktop and then probing it in an image editor.</p>
+
+<p>It’s very simple. We just resize the window to our liking, position it where we want on our screen and run a command to find out its dimensions.</p>
+
+<p>For that, a program called <strong>xwininfo</strong> is needed. It has many more uses than just geometry, but since right now it is all we need, we enter this command into our console:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">xwininfo | <span class="nb">grep </span>geometry</code></pre></figure>
+
+<p>Right after executing it, terminal window will freeze and our cursor will most likely change to a plus sign. All you have to do now is click on the window whose parameters you want.</p>
+
+<p>The second half of this command means that its output we will pipe through a grep search. That command will print many lines, but we are only interested in one which contains geometry, so we order grep to only return us lines which contain the word ‘<em>geometry</em>’.</p>
+
+<p><br /></p>
+<h2 id="introduction-to-wmctrl">Introduction to wmctrl</h2>
+
+<p>Many people who work on their computers have a small set of programs that they run each time they start working. For entertainment, often there is another set of programs etc.</p>
+
+<p>Some applications need to have different window properties during work than during slacking off. For example, a terminal emulator window could be smaller during leisure time to give more screen estate to the internet browser, but larger during work hours when Vim or Kakoune needs to be run inside it.</p>
+
+<p>Because with Linux sky is the limit, we can create extremely convenient shortcuts to instantly get the desktop design we want.</p>
+
+<p>The tool that makes it all possible is <strong>wmctrl</strong>. It is a simple, lightning fast application that looks for specified window on our desktop and gives it various behavior commands, like maximize it, change its geometry, close it and even change its title.</p>
+
+<p>First, we need to install it with our Linux distro’s package manager of choice. In case of Ubuntu/Mint etc., the command is:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>apt install wmctrl</code></pre></figure>
+
+<p>Let’s start by changing geometry of a single window. We’re gonna need to give wmctrl some identification, so it knows which window we want to tinker with. Previously used <em>xwininfo</em> command can be used here as well.</p>
+
+<p>Write this in your console window:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">xwininfo | <span class="nb">grep</span> <span class="s2">"Window id"</span> | <span class="nb">grep</span> <span class="nt">-Po</span> <span class="s1">'(?&lt;=").+(?=")'</span></code></pre></figure>
+
+<p>…and then click on the window you want. You should get the window title in your console.</p>
+
+<p>The command may look complicated if you don’t understand regex and piping, but in reality it’s simple. It filters the output of xwininfo first to just get us the line where the title resides and then extracts it from inside brackets so full title is the only thing we get.</p>
+
+<p>It is easier and makes things faster to go these extra two piping steps and get us just what we want, plus if need be, we can point a bash variable to it, or save it to a file for future use.</p>
+
+<p>The full command may not work in some edge cases (like browser with focused tab containing brackets in page title). If it doesn’t for you, just write ‘<em>xwininfo</em>’ in your console and the title will be inside brackets next to Window id number.</p>
+
+<p>Write down that title. Now, let’s look at wmctrl syntax for changing window geometry:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">wmctrl <span class="nt">-r</span> TITLE <span class="nt">-e</span> GEOMETRY</code></pre></figure>
+
+<p>One last obstacle. Wmctrl does not accept geometry in its standard format. You have to take those four numbers and re-arrange them to fit wmctrl’s standard, which is:</p>
+
+<blockquote>
+  <p>GRAVITY,PX_FROM_LEFT,PX_FROM_TOP,WIDTH,HEIGHT</p>
+</blockquote>
+
+<p>As you can see, wmctrl takes another item, here right at the beginning.</p>
+
+<p>That first number is <em>gravity</em>, which specifies the alignment, source of reference of the moved window. You most likely don’t need to understand what it is and can always set it to 0. Just remember to put it there. You can safely skip the next section describing how it works.</p>
+
+<p><br /></p>
+<h2 id="gravity-details">Gravity details</h2>
+
+<p>As you can see, we don’t have pluses and minuses to specify if the window should be moved “to the right from left side of the screen”, or “to the left from the right side of the screen”.</p>
+
+<p>Instead, we specify that reference point as if the screen would be a compass. We have four cardinal directions (north, south, east, west) and four intercardinal (northeast, northwest…) between them.</p>
+
+<p>Giving 0 refers to system default, which most likely is north-west. That means we are aligning from the top-left corner of our screen. If we’d give it a gravity of 3 (north-east), we’d be adjusting from the top-right corner, just like when we give minuses in front of numbers when setting geometry.</p>
+
+<p>Below are codes for all 8 gravity directions. Keep in mind that many window managers do not support this and instead will always secretly adjust to system default, no matter which number we feed it.</p>
+
+<blockquote>
+  <p>NorthWest (1), North (2), NorthEast (3), West (4), Center (5), East (6), SouthWest (7), South (8), SouthEast (9) and Static (10)</p>
+</blockquote>
+
+<p><br /></p>
+<h2 id="wmctrl-traps">Wmctrl traps</h2>
+
+<p>Read this part if your wmctrl command does nothing, or if you intend to use it often and want to know some caveats in advance.</p>
+
+<p>Let’s look at an example of a wmctrl command:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">wmctrl <span class="nt">-r</span> <span class="s2">"Sublime Text"</span> <span class="nt">-e</span> 0,30,20,800,1080</code></pre></figure>
+
+<p>The program first generates a list of currently existing windows, finds first title that <em>contains</em> a string specified within brackets and then sets it to gravity 0, position from left 30px, position from top 20px, window width 800px and window height 1080px.</p>
+
+<p>Because only the first found item gets adjusted, if we have few windows which are really one program, only one of them will be done and each next command given will still reposition just that one window.</p>
+
+<p>Another potential issue is that windows can have surprising titles sometimes. Browsers troll the most if we seek inside window title.</p>
+
+<p>A website we are visiting might have a “Sublime Text registered version cost” title, which could in result make your Firefox have a “Sublime Text registered version cost - Mozilla Firefox” title whenever that particular tab is focused.</p>
+
+<p>If those 3 conditions were met:</p>
+<ul>
+  <li>the title we order wmctrl to search for is ‘Sublime Text’</li>
+  <li>the browser is higher in wmctrl’s item search order than Sublime Text (and so would be checked first)</li>
+  <li>the title of the currently focused Firefox tab includes a string ‘Sublime Text’</li>
+</ul>
+
+<p>…then wmctrl would adjust Firefox’s parameters instead of Sublime Text’s.</p>
+
+<p>There are multiple ways to solve that problem:</p>
+<ol>
+  <li>use wmctrl with ‘-x’ to search WM_CLASS instead of title, and that you can find with ‘xprop | grep WM_CLASS’ command (followed by clicking a desired application window, just like with xwininfo)</li>
+  <li>use it with the ‘-F’ option to match exact string to the letter, instead of looking for string inside app title (‘Sublime Text’ only matches if the application title is ‘Sublime Text’, it will fail if it is ‘How much does Sublime Text cost - Mozilla Firefox’</li>
+  <li>change conflicting application titles right before searching (for example: ‘wmctrl -r “ - Mozilla Firefox” -N Firefox’ and Sublime Text resizing wmctrl command right after)</li>
+</ol>
+
+<p>If you are playing title guessing games in your scripts, it is generally a good idea to set application titles to some unique strings that are not likely to get matched (‘:.:BROWSER:.:’, ‘:.:EDITOR:.:’, ‘:.:MP3PLAYER:.:’…) in all applications that give an option to change their titles. Many do, many don’t ;)</p>
+
+<p>If you can’t, it is good practice to order your resizing commands starting from applications most likely to cause conflicts (ie. those whose names dynamically change based on file opened, website visited etc.), through less likely to do so, with the ones which never will (due to constant unique name) at the bottom. For the last ones, the order doesn’t matter.</p>
+
+<p>For each that can cause problems, follow the line in which you resize with the line that changes that same program’s name (the mentioned ‘-N’, you can see it below in an example file). This will ensure that the application won’t cause any conflicts.</p>
+
+<p>Don’t worry if you have to do a lot of title renaming - both repositioning and renaming are trivial operations from your processor’s point of view. You will never see any performance hit, no matter how old your computer is and how many windows you shuffle around.</p>
+
+<p>Again, many apps offer an option to set a permanent app title and your fixing attempts should start there. Some even allow having different titles when starting them with different profiles. Fantastic terminal emulator called <a href="https://gnunn1.github.io/tilix-web/">Tilix</a> is a good example.</p>
+
+<p><br /></p>
+<h2 id="creating-a-script-file-to-resize-multiple-windows">Creating a script file to resize multiple windows</h2>
+
+<p>Each wmctrl command only changes one window, so we need to invoke as many commands as windows we need changed.</p>
+
+<p>To contain all these instructions, we will use a bash script. Traditionally, in its first line we need to point to the interpreter. Most often, the line you need is:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span></code></pre></figure>
+
+<p>Then, in each line a separate wmctrl command. No need for colon, semicolon or any other sign by line end, just one command in each line.</p>
+
+<p>The quickest way to write such script is to set up exactly the desktop layout we want. Align everything so it looks perfect. Then, use the mentioned xwininfo commands to get each window’s geometry and title. Write everything down.</p>
+
+<p>Next, write wmctrl commands. Remember to convert geometry strings (WIDTHxHEIGHT+FROMLEFT+FROMTOP) to format that wmctrl accepts (0,FROMLEFT,FROMTOP,WIDTH,HEIGHT) in each command.</p>
+
+<p>A complete example winresize.sh file looks like this:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+wmctrl <span class="nt">-r</span> Firefox <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> Firefox <span class="nt">-N</span> Firefox
+wmctrl <span class="nt">-r</span> <span class="s1">'Sublime Text'</span> <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> qBittorrent <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> <span class="s1">'Google Chrome'</span> <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> <span class="s1">'Tor Browser'</span> <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> Kid3 <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> Pinta <span class="nt">-e</span> 0,394,17,1510,1044
+wmctrl <span class="nt">-r</span> LibreOffice <span class="nt">-e</span> 0,394,17,1510,1044
+wmctrl <span class="nt">-r</span> QuiteRSS <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> easystroke <span class="nt">-e</span> 0,942,18,961,1042
+wmctrl <span class="nt">-r</span> Telegram <span class="nt">-e</span> 0,16,95,359,605
+wmctrl <span class="nt">-r</span> deadbeef <span class="nt">-e</span> 0,16,720,359,340</code></pre></figure>
+
+<p>Don’t forget to order them from most conflicting to least conflicting and follow each problematic application with another wmctrl command that renames it. Above, you see me doing it with Firefox.</p>
+
+<p><br /></p>
+<h2 id="making-convenient-shortcuts-for-resizing">Making convenient shortcuts for resizing</h2>
+
+<p>The final step is to set up some way to execute our new script at will. Below are main 3 categories of options we have.</p>
+
+<ol>
+  <li>create a bash alias for execution of that file (in file <em>~/.bash_aliases</em> add line: <em>resizer=’/path/to/script.sh’</em>), source that file (or restart the system if you don’t know how) and then execute it from console by writing <em>‘resizer’</em></li>
+  <li>set up a system-wide keyboard shortcut for that script (different for every window manager, in i3 it’s as simple as adding this line: bindsym F9 exec /path/to/script.sh)</li>
+  <li>create a mouse gesture to execute a script (easily achieved with easystroke, choosing ‘command’ option and then in command just pasting /full/path/to/our/script.sh</li>
+</ol>
+
+<p>And voila! We now can reshape all our desktop with something as simple as a single command, pressing of a key, or a mouse gesture. We can create as many of those files and shortcuts as we want.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Chris Blachewicz</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>Chris Blachewicz</li>
+          <li><a href="mailto:call911@pm.me">call911@pm.me</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/chris-bz"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">chris-bz</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

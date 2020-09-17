@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Keyboard Nest</title>
+    <title>Chris Blachewicz</title>
     <description>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</description>
-    <link>https://chris-bz.github.io/</link>
-    <atom:link href="https://chris-bz.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 12 Sep 2020 20:56:16 +0200</pubDate>
-    <lastBuildDate>Sat, 12 Sep 2020 20:56:16 +0200</lastBuildDate>
+    <link>http://www.chrisbl.com/</link>
+    <atom:link href="http://www.chrisbl.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 17 Sep 2020 16:14:34 +0200</pubDate>
+    <lastBuildDate>Thu, 17 Sep 2020 16:14:34 +0200</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
@@ -235,8 +235,8 @@ And here is the entire code:&lt;a id=&quot;full_code&quot;&gt;&lt;/a&gt;&lt;/p&g
 
 </description>
         <pubDate>Mon, 07 Sep 2020 11:53:01 +0200</pubDate>
-        <link>https://chris-bz.github.io/python/2020/09/07/converting-date-to-iso8601-in-python.html</link>
-        <guid isPermaLink="true">https://chris-bz.github.io/python/2020/09/07/converting-date-to-iso8601-in-python.html</guid>
+        <link>http://www.chrisbl.com/python/2020/09/07/converting-date-to-iso8601-in-python.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/python/2020/09/07/converting-date-to-iso8601-in-python.html</guid>
         
         
         <category>python</category>
@@ -445,166 +445,13 @@ installed on: Linux Mint 19&lt;/p&gt;
 &lt;p&gt;Unfortunately, for me each one of those is a dealbreaker, and all together make CMUS unarmed for daily use.&lt;/p&gt;
 </description>
         <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
-        <link>https://chris-bz.github.io/program/reviews/2020/09/01/cmus-music-player-review.html</link>
-        <guid isPermaLink="true">https://chris-bz.github.io/program/reviews/2020/09/01/cmus-music-player-review.html</guid>
+        <link>http://www.chrisbl.com/program/reviews/2020/09/01/cmus-music-player-review.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/program/reviews/2020/09/01/cmus-music-player-review.html</guid>
         
         
         <category>program</category>
         
         <category>reviews</category>
-        
-      </item>
-    
-      <item>
-        <title>Ranger configuration extras</title>
-        <description>&lt;p&gt;Ranger is probably the single most powerful file manager application on any operating system.&lt;/p&gt;
-
-&lt;p&gt;It can be customized to the point of practically being a system wide remote, one tool that can do anything. In this regard, it’s a very neat extension of command line in Linux.&lt;/p&gt;
-
-&lt;p&gt;Because of that, almost every Ranger config file I’ve stumbled upon contains at least an interesting line or two. I’ve used the application for few years already, but feel like there’s a lot that still needs attention. Like, for example, a convenient way of dealing with archives of all sorts, or different file information views, depending on a particular need.&lt;/p&gt;
-
-&lt;p&gt;Below are some of my favorite additions to the rc.conf file. You can usually find it in ~/.config/ranger/ folder. If it’s not there, run this command in command line: ‘ranger –copy-config=all’, which should create it.&lt;/p&gt;
-
-&lt;p&gt;Just paste the quoted lines wherever you see fit inside that file, but keep in mind that some of those commands invoke programs you will have to install.&lt;/p&gt;
-
-&lt;h3 id=&quot;keyboard-layout-change&quot;&gt;Keyboard layout change&lt;/h3&gt;
-
-&lt;p&gt;Using alternative keyboard layouts can be very painful for that person’s friends and family. If they sometimes need to operate on this person’s machine, after each session they might hate that person a little bit more.&lt;/p&gt;
-
-&lt;p&gt;Dvorak and Colemak are the unsung heroes of filesystem encryption, making all attempts to search Youtube, finding something out on Google etc. fruitless, unless someone’s brain knows the layout. Even with keycaps being changed accordingly.&lt;/p&gt;
-
-&lt;p&gt;In order to help those poor people, we can set up easy keyboard layout change to and from basic qwerty US layout to any we want. For that, we need to install setxkbmap with our package manager. For Ubuntu users, the command to paste in command line is:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sudo apt-get install setxkbmap&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Then, insert these two lines to rc.conf:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map Ku shell setxkbmap -variant ,us&lt;br /&gt;
-map Kc shell setxkbmap -variant colemak&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;‘Ku’ and “Kc’ are my key combinations. You can set them to whatever you have unmapped. Then you need to restart Ranger and whenever you want to change the layout, you just use those key combinations.&lt;/p&gt;
-
-&lt;h1 id=&quot;mp3-file-tag-preview&quot;&gt;MP3 file tag preview&lt;/h1&gt;
-
-&lt;p&gt;Sometimes, it is convenient to check the content of an mp3 tag. For example, a track we have on hard drive might just have artist and title in its filename, but we want to quickly check from which album it is, or which year it was released.&lt;/p&gt;
-
-&lt;p&gt;Opening a browser for a Rate Your Music/Discogs/etc. check might take longer than getting to our music directory, quickly locating that file and… pressing a key to see its tag contents.&lt;/p&gt;
-
-&lt;p&gt;For that, we’re going to need a CLI tag viewer. I highly recommend eyeD3, available both as a CLI app and importable Python library. So, first in command line:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sudo apt install eyed3&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;And in Ranger config file:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map T shell clear; eyeD3 %s; read -p “———-press ENTER to continue———–”&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;We are making a 3-step operation here:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;clear terminal window, so that tag information can be the only thing displayed, so we don’t have to strain our eyes looking for it&lt;/li&gt;
-  &lt;li&gt;pass selected file(s) to eyeD3 for tag preview&lt;/li&gt;
-  &lt;li&gt;using read to display some information&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;We need step 3, read with -p option (prompt). It waits for user input, enabling us to view the tag before coming back to Ranger.&lt;/p&gt;
-
-&lt;p&gt;Otherwise, we’d have to quit Ranger, display tag and have to start it again manually. Without the ‘-p’ option, Ranger would display tag information and then instantly come back, requiring photographic memory coupled with Spiderman instincts to pick up the information we want. It would only be visible for fracture of a second.&lt;/p&gt;
-
-&lt;p&gt;Notice that you can select multiple desired files, just like you normally mark them for operations in Ranger, and for each of them, tag information will be displayed in vertical order. Very handy.&lt;/p&gt;
-
-&lt;h1 id=&quot;mp3-player-playback-control&quot;&gt;MP3 player playback control&lt;/h1&gt;
-
-&lt;p&gt;In my opinion, it is much better to have a system-wide playback control shortcuts, than narrowing it down to a specific application. This way, we can change tracks while the monitor is off and never have to worry about what’s focused. Even if we spend large majority of time in our file manager.&lt;/p&gt;
-
-&lt;p&gt;If you don’t have any free system-wide available key combinations for that porpuse, you can let Ranger do the ordering. So long as your music player accepts playback commands from terminal session (if it doesn’t, you need to change your music player).&lt;/p&gt;
-
-&lt;p&gt;Ordering player to start playback of hovered/selected file(s) is as simple as setting up your default music application in Ranger’s rifle.conf file. But maybe we want to enqueue instead of play?&lt;/p&gt;
-
-&lt;p&gt;In this case, we have to check what playback control commands particular player accepts. Most applications will give such information when starting it up from terminal window with ‘ -h’ (short for ‘help’) added at the end.&lt;/p&gt;
-
-&lt;p&gt;In DeadBeef, enqueing is done with ‘–queue’ parameter. Entire command looks like this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map de chain shell deadbeef –queue %s; mark_files all=True val=False&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;You need to replace it with your player of choice and its equivalent command (which might very well be exactly the same).&lt;/p&gt;
-
-&lt;p&gt;The second part is also important. Ranger has a nasty habit of leaving selection after operation and no way to change that behavior, as far as I know. There is an option to drop all selections when leaving folder, but it doesn’t work on my computer.&lt;/p&gt;
-
-&lt;p&gt;It is not a problem, because we can slap the above ‘mark_files’ command whenever we want to unselect after an operation and skip it whenever we don’t, giving us full control.&lt;/p&gt;
-
-&lt;h1 id=&quot;starting-twitch-streams&quot;&gt;Starting Twitch streams&lt;/h1&gt;
-
-&lt;p&gt;Youtube-dl is a great tool to download Youtube videos, but it can also be used in concert with MPV to play its videos, or playback Twitch streams.&lt;/p&gt;
-
-&lt;p&gt;For that, we of course first need to both have MPV and youtube-dl installed. Then, it’s as simple as adding one line for each stream to rc.conf:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map qan shell killall mpv; mpv https://www.twitch.tv/boxerpete &amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;First part is optional and it kills all mpv instances. Since I want to play a stream now, first I want to end playback if something is on already, as I’m not gonna watch two things at once.&lt;/p&gt;
-
-&lt;p&gt;Then we start MPV with Twitch streamer url address. The player automatically invokes youtube-dl and begins stream playback.&lt;/p&gt;
-
-&lt;p&gt;In order not to freeze Ranger until stream playback is finished, which could be in 23 hours and 59 minutes in case of a 24-hour stream, we need to order it to start as separate process, hence line ending.&lt;/p&gt;
-
-&lt;p&gt;Or are you like me and sometimes watch beautiful places on webcams while working, to cheat yourself that you’re not sitting inside dark cave until the work is done?&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map qge shell mpv https://www.youtube.com/watch?v=yMSc-qqW3To –no-audio –no-resume-playback &amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h1 id=&quot;open-with&quot;&gt;Open with…&lt;/h1&gt;
-
-&lt;p&gt;Default applications often don’t meet all our requirements for file handling. We might be using one application for default action, but also need another option for marginal cases.&lt;/p&gt;
-
-&lt;p&gt;Take images, for example. For casual users, default action could be to open them in image viewer. Sometimes, we might need to edit them, carve something out and send it to someone? It’s good to prepare for such cases:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map wp shell pinta %s&amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Pinta is a simple image editor for Linux. It is an equivalent of the old Paint Shop Pro on Windows, back before Corel bought them.&lt;/p&gt;
-
-&lt;p&gt;For simple modifications like slicing particular areas out of an image, there is no point to start any graphical powerhouse, as we’d waste a lot of time looking at loading screen while the program computes stuff we will not need.&lt;/p&gt;
-
-&lt;p&gt;Maybe I need to open file in an editor I’m not using daily:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map us shell subl %s; xdotool key super+e&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Sublime Text spawns separate process by default, so it doesn’t require command ending to make it to. I am using an xdotool program to press a system-wide i3 keyboard shortcut to focus that application. After all, when I open something for edition, the next thing I most often want is to start editing it.&lt;/p&gt;
-
-&lt;p&gt;Another use is to start program with a specified geometry. I want to start MPV player, but want it on my second 4:3 monitor:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;map uv shell mpv –geometry=1280x1024+1920+0 %s&amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;We could add ‘–fs’ before sending output to /dev/null to also start the program in full screen, but my experience is that it’s bugged and sometimes fullscreens on first monitor, sometimes on second.&lt;/p&gt;
-
-&lt;p&gt;Omitting it and specifying geometry is successful 100% of the time and there is no practical difference. It can be annoying if someone often click-drags the player window by accident (fullscreen prevents moving window around). But in this case it’s just better to disable, with the exception of someone using mouse and click-dragging MPV window by accident. If that is your problem, just add this line to your mpv.conf:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;no-window-dragging&lt;/p&gt;
-&lt;/blockquote&gt;
-</description>
-        <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
-        <link>https://chris-bz.github.io/programs/2020/09/01/ranger-configuration-extras.html</link>
-        <guid isPermaLink="true">https://chris-bz.github.io/programs/2020/09/01/ranger-configuration-extras.html</guid>
-        
-        
-        <category>programs</category>
         
       </item>
     
@@ -770,9 +617,396 @@ map H history_go 1&lt;/p&gt;
 
 &lt;p&gt;But when we have all sorts of ‘map [key(s)] cd /some/path’ shortcuts and jump between them, those two bindings become way more powerful. And we can bookmark folders on the fly as well (‘m’ saves current folder to bookmarks, tilde and ‘ keys open a list of bookmarked folders).&lt;/p&gt;
 </description>
-        <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
-        <link>https://chris-bz.github.io/programs/2020/09/01/setting-up-single-navigation-pane-in-ranger.html</link>
-        <guid isPermaLink="true">https://chris-bz.github.io/programs/2020/09/01/setting-up-single-navigation-pane-in-ranger.html</guid>
+        <pubDate>Mon, 22 Jun 2020 13:31:14 +0200</pubDate>
+        <link>http://www.chrisbl.com/programs/2020/06/22/setting-up-single-navigation-pane-in-ranger.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/programs/2020/06/22/setting-up-single-navigation-pane-in-ranger.html</guid>
+        
+        
+        <category>programs</category>
+        
+      </item>
+    
+      <item>
+        <title>Ranger configuration extras</title>
+        <description>&lt;p&gt;Ranger is probably the single most powerful file manager application on any operating system.&lt;/p&gt;
+
+&lt;p&gt;It can be customized to the point of practically being a system wide remote, one tool that can do anything. In this regard, it’s a very neat extension of command line in Linux.&lt;/p&gt;
+
+&lt;p&gt;Because of that, almost every Ranger config file I’ve stumbled upon contains at least an interesting line or two. I’ve used the application for few years already, but feel like there’s a lot that still needs attention. Like, for example, a convenient way of dealing with archives of all sorts, or different file information views, depending on a particular need.&lt;/p&gt;
+
+&lt;p&gt;Below are some of my favorite additions to the rc.conf file. You can usually find it in ~/.config/ranger/ folder. If it’s not there, run this command in command line: ‘ranger –copy-config=all’, which should create it.&lt;/p&gt;
+
+&lt;p&gt;Just paste the quoted lines wherever you see fit inside that file, but keep in mind that some of those commands invoke programs you will have to install.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;keyboard-layout-change&quot;&gt;Keyboard layout change&lt;/h2&gt;
+
+&lt;p&gt;Using alternative keyboard layouts can be very painful for that person’s friends and family. If they sometimes need to operate on this person’s machine, after each session they might hate that person a little bit more.&lt;/p&gt;
+
+&lt;p&gt;Dvorak and Colemak are the unsung heroes of filesystem encryption, making all attempts to search Youtube, finding something out on Google etc. fruitless, unless someone’s brain knows the layout. Even with keycaps being changed accordingly.&lt;/p&gt;
+
+&lt;p&gt;In order to help those poor people, we can set up easy keyboard layout change to and from basic qwerty US layout to any we want. For that, we need to install setxkbmap with our package manager. For Ubuntu users, the command to paste in command line is:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;sudo apt-get install setxkbmap&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Then, insert these two lines to rc.conf:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map Ku shell setxkbmap -variant ,us&lt;br /&gt;
+map Kc shell setxkbmap -variant colemak&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;‘Ku’ and “Kc’ are my key combinations. You can set them to whatever you have unmapped. Then you need to restart Ranger and whenever you want to change the layout, you just use those key combinations.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;mp3-file-tag-preview&quot;&gt;MP3 file tag preview&lt;/h2&gt;
+
+&lt;p&gt;Sometimes, it is convenient to check the content of an mp3 tag. For example, a track we have on hard drive might just have artist and title in its filename, but we want to quickly check from which album it is, or which year it was released.&lt;/p&gt;
+
+&lt;p&gt;Opening a browser for a Rate Your Music/Discogs/etc. check might take longer than getting to our music directory, quickly locating that file and… pressing a key to see its tag contents.&lt;/p&gt;
+
+&lt;p&gt;For that, we’re going to need a CLI tag viewer. I highly recommend eyeD3, available both as a CLI app and importable Python library. So, first in command line:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;sudo apt install eyed3&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;And in Ranger config file:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map T shell clear; eyeD3 %s; read -p “———-press ENTER to continue———–”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;We are making a 3-step operation here:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;clear terminal window, so that tag information can be the only thing displayed, so we don’t have to strain our eyes looking for it&lt;/li&gt;
+  &lt;li&gt;pass selected file(s) to eyeD3 for tag preview&lt;/li&gt;
+  &lt;li&gt;using read to display some information&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We need step 3, read with -p option (prompt). It waits for user input, enabling us to view the tag before coming back to Ranger.&lt;/p&gt;
+
+&lt;p&gt;Otherwise, we’d have to quit Ranger, display tag and have to start it again manually. Without the ‘-p’ option, Ranger would display tag information and then instantly come back, requiring photographic memory coupled with Spiderman instincts to pick up the information we want. It would only be visible for fracture of a second.&lt;/p&gt;
+
+&lt;p&gt;Notice that you can select multiple desired files, just like you normally mark them for operations in Ranger, and for each of them, tag information will be displayed in vertical order. Very handy.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;mp3-player-playback-control&quot;&gt;MP3 player playback control&lt;/h2&gt;
+
+&lt;p&gt;In my opinion, it is much better to have a system-wide playback control shortcuts, than narrowing it down to a specific application. This way, we can change tracks while the monitor is off and never have to worry about what’s focused. Even if we spend large majority of time in our file manager.&lt;/p&gt;
+
+&lt;p&gt;If you don’t have any free system-wide available key combinations for that porpuse, you can let Ranger do the ordering. So long as your music player accepts playback commands from terminal session (if it doesn’t, you need to change your music player).&lt;/p&gt;
+
+&lt;p&gt;Ordering player to start playback of hovered/selected file(s) is as simple as setting up your default music application in Ranger’s rifle.conf file. But maybe we want to enqueue instead of play?&lt;/p&gt;
+
+&lt;p&gt;In this case, we have to check what playback control commands particular player accepts. Most applications will give such information when starting it up from terminal window with ‘ -h’ (short for ‘help’) added at the end.&lt;/p&gt;
+
+&lt;p&gt;In DeadBeef, enqueing is done with ‘–queue’ parameter. Entire command looks like this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map de chain shell deadbeef –queue %s; mark_files all=True val=False&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You need to replace it with your player of choice and its equivalent command (which might very well be exactly the same).&lt;/p&gt;
+
+&lt;p&gt;The second part is also important. Ranger has a nasty habit of leaving selection after operation and no way to change that behavior, as far as I know. There is an option to drop all selections when leaving folder, but it doesn’t work on my computer.&lt;/p&gt;
+
+&lt;p&gt;It is not a problem, because we can slap the above ‘mark_files’ command whenever we want to unselect after an operation and skip it whenever we don’t, giving us full control.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;starting-twitch-streams&quot;&gt;Starting Twitch streams&lt;/h2&gt;
+
+&lt;p&gt;Youtube-dl is a great tool to download Youtube videos, but it can also be used in concert with MPV to play its videos, or playback Twitch streams.&lt;/p&gt;
+
+&lt;p&gt;For that, we of course first need to both have MPV and youtube-dl installed. Then, it’s as simple as adding one line for each stream to rc.conf:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map qan shell killall mpv; mpv https://www.twitch.tv/boxerpete &amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;First part is optional and it kills all mpv instances. Since I want to play a stream now, first I want to end playback if something is on already, as I’m not gonna watch two things at once.&lt;/p&gt;
+
+&lt;p&gt;Then we start MPV with Twitch streamer url address. The player automatically invokes youtube-dl and begins stream playback.&lt;/p&gt;
+
+&lt;p&gt;In order not to freeze Ranger until stream playback is finished, which could be in 23 hours and 59 minutes in case of a 24-hour stream, we need to order it to start as separate process, hence line ending.&lt;/p&gt;
+
+&lt;p&gt;Or are you like me and sometimes watch beautiful places on webcams while working, to cheat yourself that you’re not sitting inside dark cave until the work is done?&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map qge shell mpv https://www.youtube.com/watch?v=yMSc-qqW3To –no-audio –no-resume-playback &amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;open-with&quot;&gt;Open with…&lt;/h2&gt;
+
+&lt;p&gt;Default applications often don’t meet all our requirements for file handling. We might be using one application for default action, but also need another option for marginal cases.&lt;/p&gt;
+
+&lt;p&gt;Take images, for example. For casual users, default action could be to open them in image viewer. Sometimes, we might need to edit them, carve something out and send it to someone? It’s good to prepare for such cases:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map wp shell pinta %s&amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Pinta is a simple image editor for Linux. It is an equivalent of the old Paint Shop Pro on Windows, back before Corel bought them.&lt;/p&gt;
+
+&lt;p&gt;For simple modifications like slicing particular areas out of an image, there is no point to start any graphical powerhouse, as we’d waste a lot of time looking at loading screen while the program computes stuff we will not need.&lt;/p&gt;
+
+&lt;p&gt;Maybe I need to open file in an editor I’m not using daily:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map us shell subl %s&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Sublime Text spawns separate process by default, so it doesn’t require command ending to make it to.&lt;/p&gt;
+
+&lt;p&gt;Another use is to start program with a specified geometry. I want to start MPV player, but want it on my second 4:3 monitor:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;map uv shell mpv –geometry=1280x1024+1920+0 %s&amp;lt;/dev/null &amp;amp;&amp;gt;/dev/null &amp;amp;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;We could add ‘–fs’ before sending output to /dev/null to also start the program in full screen, but my experience is that it’s bugged and sometimes fullscreens on first monitor, sometimes on second.&lt;/p&gt;
+
+&lt;p&gt;Omitting it and specifying geometry is successful 100% of the time and there is no practical difference. It can be annoying if someone often click-drags the player window by accident (fullscreen prevents moving window around). But in this case it’s just better to disable, with the exception of someone using mouse and click-dragging MPV window by accident. If that is your problem, just add this line to your mpv.conf:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;no-window-dragging&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        <pubDate>Wed, 01 Apr 2020 22:43:18 +0200</pubDate>
+        <link>http://www.chrisbl.com/programs/2020/04/01/ranger-configuration-extras.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/programs/2020/04/01/ranger-configuration-extras.html</guid>
+        
+        
+        <category>programs</category>
+        
+      </item>
+    
+      <item>
+        <title>Using commands to resize programs in Linux</title>
+        <description>&lt;p&gt;Neither Linux nor Windows remember window size and position for applications.&lt;/p&gt;
+
+&lt;p&gt;Minority of programs remember dimensions and position on exit. For the rest of them, a troll is sitting inside PC case and rolls his dice. “Where should we put it this time?”.&lt;/p&gt;
+
+&lt;p&gt;It is sad that something so basic and important is still largely ignored by people behind both operating systems and we have to look for separate tools to try and fix that while much less important issues take precedence.&lt;/p&gt;
+
+&lt;p&gt;In this article, we will explore options to modify window sizes and positions through commands and scripts.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;geometry&quot;&gt;Geometry&lt;/h2&gt;
+
+&lt;p&gt;Ocassionaly, Linux applications support setting geometry, which more than solves this problem, but only for those apps.&lt;/p&gt;
+
+&lt;p&gt;Geometry is a special string containing four numbers:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;window width&lt;/li&gt;
+  &lt;li&gt;window height&lt;/li&gt;
+  &lt;li&gt;starting position in pixels from the left screen border&lt;/li&gt;
+  &lt;li&gt;starting position in pixels from the top screen border&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can append this special geometry string to some programs when we start them from command line. This functionality has to be written by the developer into the app.&lt;/p&gt;
+
+&lt;p&gt;There are also programs which can set any graphical window’s parameters through special commands. The below article explains both in detail.&lt;/p&gt;
+
+&lt;p&gt;First two parameters decide how big the window is vertically and horizontally, the other two decide where the top-left corner of the application is on our monitor. Here’s an example:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1200x600+20+0&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Assuming we have a 1080p monitor, it’s exact resolution is 1920x1080. Here, the program window is being set to 1200px wide and 600px high. It will occupy a considerable amount of space on our monitor.&lt;/p&gt;
+
+&lt;p&gt;The third number indicates that we want our program to be 20px from the left border of our monitor. The last one means it will start at pixel 0 from the top. In other words, there will be no space between our program’s top border and monitor’s top border.&lt;/p&gt;
+
+&lt;p&gt;Notice two pluses at the end. We can either put ‘+’ or ‘-‘ in front of each of the last two numbers. Plus means ‘pixels from the left edge of the screen’, minus means ‘pixels from the right edge of the screen’.&lt;/p&gt;
+
+&lt;p&gt;Sometimes it is more convenient to align our windows from the right side, so it is great that we have this flexibility.&lt;/p&gt;
+
+&lt;p&gt;Of course, pixels then align towards the left side, just like when we get an order to move our piece of furniture 20cm from the right wall, we move it to the left instead of trying to demolish the wall and put it inside ;)&lt;/p&gt;
+
+&lt;p&gt;Without the option to align from the right side with minuses, if we’d want to set it 20 pixels from the right, we’d have to calculate each time: current monitor resolution - (window width + 20px). It would be very obnoxious to do it.&lt;/p&gt;
+
+&lt;p&gt;Not all window managers on Linux support geometry, so make sure that the one in your distribution does before starting to tinker with it. Fortunately, all the popular ones (and many less popular ones) do, so it is likely that yours does to.&lt;/p&gt;
+
+&lt;p&gt;Another thing to consider is that some window managers have different window ‘states’. For example, in i3 windows can be either floating or tiling. Geometry only works for floating windows. But if you’re using a tiling window manager, you most likely do that on purpose, and so already know about that distinction.&lt;/p&gt;
+
+&lt;p&gt;Like mentioned at the beginning of this article, some programs support setting it on program startup. In those cases, the magic formula almost always looks like in this shell command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;mpv &lt;span class=&quot;nt&quot;&gt;--geometry&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1280x1024+1920+0 &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;It is super useful for multi-monitor setups. Sometimes, we want to start the player on monitor one. Tutorials, we might want to watch on monitor 2, a TV show on our TV, which is set up as monitor 3.&lt;/p&gt;
+
+&lt;p&gt;We can have different commands to start the same player in these different contexts, which is much more powerful than system-wide memory of last known window state (which nevertheless needs to be implemented).&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;getting-window-geometry&quot;&gt;Getting window geometry&lt;/h2&gt;
+
+&lt;p&gt;Finding out exact position and dimensions of our window does not require print-screening entire desktop and then probing it in an image editor.&lt;/p&gt;
+
+&lt;p&gt;It’s very simple. We just resize the window to our liking, position it where we want on our screen and run a command to find out its dimensions.&lt;/p&gt;
+
+&lt;p&gt;For that, a program called &lt;strong&gt;xwininfo&lt;/strong&gt; is needed. It has many more uses than just geometry, but since right now it is all we need, we enter this command into our console:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xwininfo | &lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;geometry&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Right after executing it, terminal window will freeze and our cursor will most likely change to a plus sign. All you have to do now is click on the window whose parameters you want.&lt;/p&gt;
+
+&lt;p&gt;The second half of this command means that its output we will pipe through a grep search. That command will print many lines, but we are only interested in one which contains geometry, so we order grep to only return us lines which contain the word ‘&lt;em&gt;geometry&lt;/em&gt;’.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;introduction-to-wmctrl&quot;&gt;Introduction to wmctrl&lt;/h2&gt;
+
+&lt;p&gt;Many people who work on their computers have a small set of programs that they run each time they start working. For entertainment, often there is another set of programs etc.&lt;/p&gt;
+
+&lt;p&gt;Some applications need to have different window properties during work than during slacking off. For example, a terminal emulator window could be smaller during leisure time to give more screen estate to the internet browser, but larger during work hours when Vim or Kakoune needs to be run inside it.&lt;/p&gt;
+
+&lt;p&gt;Because with Linux sky is the limit, we can create extremely convenient shortcuts to instantly get the desktop design we want.&lt;/p&gt;
+
+&lt;p&gt;The tool that makes it all possible is &lt;strong&gt;wmctrl&lt;/strong&gt;. It is a simple, lightning fast application that looks for specified window on our desktop and gives it various behavior commands, like maximize it, change its geometry, close it and even change its title.&lt;/p&gt;
+
+&lt;p&gt;First, we need to install it with our Linux distro’s package manager of choice. In case of Ubuntu/Mint etc., the command is:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt install wmctrl&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Let’s start by changing geometry of a single window. We’re gonna need to give wmctrl some identification, so it knows which window we want to tinker with. Previously used &lt;em&gt;xwininfo&lt;/em&gt; command can be used here as well.&lt;/p&gt;
+
+&lt;p&gt;Write this in your console window:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xwininfo | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Window id&quot;&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Po&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;(?&amp;lt;=&quot;).+(?=&quot;)&#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;…and then click on the window you want. You should get the window title in your console.&lt;/p&gt;
+
+&lt;p&gt;The command may look complicated if you don’t understand regex and piping, but in reality it’s simple. It filters the output of xwininfo first to just get us the line where the title resides and then extracts it from inside brackets so full title is the only thing we get.&lt;/p&gt;
+
+&lt;p&gt;It is easier and makes things faster to go these extra two piping steps and get us just what we want, plus if need be, we can point a bash variable to it, or save it to a file for future use.&lt;/p&gt;
+
+&lt;p&gt;The full command may not work in some edge cases (like browser with focused tab containing brackets in page title). If it doesn’t for you, just write ‘&lt;em&gt;xwininfo&lt;/em&gt;’ in your console and the title will be inside brackets next to Window id number.&lt;/p&gt;
+
+&lt;p&gt;Write down that title. Now, let’s look at wmctrl syntax for changing window geometry:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; TITLE &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; GEOMETRY&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;One last obstacle. Wmctrl does not accept geometry in its standard format. You have to take those four numbers and re-arrange them to fit wmctrl’s standard, which is:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;GRAVITY,PX_FROM_LEFT,PX_FROM_TOP,WIDTH,HEIGHT&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;As you can see, wmctrl takes another item, here right at the beginning.&lt;/p&gt;
+
+&lt;p&gt;That first number is &lt;em&gt;gravity&lt;/em&gt;, which specifies the alignment, source of reference of the moved window. You most likely don’t need to understand what it is and can always set it to 0. Just remember to put it there. You can safely skip the next section describing how it works.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;gravity-details&quot;&gt;Gravity details&lt;/h2&gt;
+
+&lt;p&gt;As you can see, we don’t have pluses and minuses to specify if the window should be moved “to the right from left side of the screen”, or “to the left from the right side of the screen”.&lt;/p&gt;
+
+&lt;p&gt;Instead, we specify that reference point as if the screen would be a compass. We have four cardinal directions (north, south, east, west) and four intercardinal (northeast, northwest…) between them.&lt;/p&gt;
+
+&lt;p&gt;Giving 0 refers to system default, which most likely is north-west. That means we are aligning from the top-left corner of our screen. If we’d give it a gravity of 3 (north-east), we’d be adjusting from the top-right corner, just like when we give minuses in front of numbers when setting geometry.&lt;/p&gt;
+
+&lt;p&gt;Below are codes for all 8 gravity directions. Keep in mind that many window managers do not support this and instead will always secretly adjust to system default, no matter which number we feed it.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;NorthWest (1), North (2), NorthEast (3), West (4), Center (5), East (6), SouthWest (7), South (8), SouthEast (9) and Static (10)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;wmctrl-traps&quot;&gt;Wmctrl traps&lt;/h2&gt;
+
+&lt;p&gt;Read this part if your wmctrl command does nothing, or if you intend to use it often and want to know some caveats in advance.&lt;/p&gt;
+
+&lt;p&gt;Let’s look at an example of a wmctrl command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Sublime Text&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,30,20,800,1080&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The program first generates a list of currently existing windows, finds first title that &lt;em&gt;contains&lt;/em&gt; a string specified within brackets and then sets it to gravity 0, position from left 30px, position from top 20px, window width 800px and window height 1080px.&lt;/p&gt;
+
+&lt;p&gt;Because only the first found item gets adjusted, if we have few windows which are really one program, only one of them will be done and each next command given will still reposition just that one window.&lt;/p&gt;
+
+&lt;p&gt;Another potential issue is that windows can have surprising titles sometimes. Browsers troll the most if we seek inside window title.&lt;/p&gt;
+
+&lt;p&gt;A website we are visiting might have a “Sublime Text registered version cost” title, which could in result make your Firefox have a “Sublime Text registered version cost - Mozilla Firefox” title whenever that particular tab is focused.&lt;/p&gt;
+
+&lt;p&gt;If those 3 conditions were met:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;the title we order wmctrl to search for is ‘Sublime Text’&lt;/li&gt;
+  &lt;li&gt;the browser is higher in wmctrl’s item search order than Sublime Text (and so would be checked first)&lt;/li&gt;
+  &lt;li&gt;the title of the currently focused Firefox tab includes a string ‘Sublime Text’&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;…then wmctrl would adjust Firefox’s parameters instead of Sublime Text’s.&lt;/p&gt;
+
+&lt;p&gt;There are multiple ways to solve that problem:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;use wmctrl with ‘-x’ to search WM_CLASS instead of title, and that you can find with ‘xprop | grep WM_CLASS’ command (followed by clicking a desired application window, just like with xwininfo)&lt;/li&gt;
+  &lt;li&gt;use it with the ‘-F’ option to match exact string to the letter, instead of looking for string inside app title (‘Sublime Text’ only matches if the application title is ‘Sublime Text’, it will fail if it is ‘How much does Sublime Text cost - Mozilla Firefox’&lt;/li&gt;
+  &lt;li&gt;change conflicting application titles right before searching (for example: ‘wmctrl -r “ - Mozilla Firefox” -N Firefox’ and Sublime Text resizing wmctrl command right after)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;If you are playing title guessing games in your scripts, it is generally a good idea to set application titles to some unique strings that are not likely to get matched (‘:.:BROWSER:.:’, ‘:.:EDITOR:.:’, ‘:.:MP3PLAYER:.:’…) in all applications that give an option to change their titles. Many do, many don’t ;)&lt;/p&gt;
+
+&lt;p&gt;If you can’t, it is good practice to order your resizing commands starting from applications most likely to cause conflicts (ie. those whose names dynamically change based on file opened, website visited etc.), through less likely to do so, with the ones which never will (due to constant unique name) at the bottom. For the last ones, the order doesn’t matter.&lt;/p&gt;
+
+&lt;p&gt;For each that can cause problems, follow the line in which you resize with the line that changes that same program’s name (the mentioned ‘-N’, you can see it below in an example file). This will ensure that the application won’t cause any conflicts.&lt;/p&gt;
+
+&lt;p&gt;Don’t worry if you have to do a lot of title renaming - both repositioning and renaming are trivial operations from your processor’s point of view. You will never see any performance hit, no matter how old your computer is and how many windows you shuffle around.&lt;/p&gt;
+
+&lt;p&gt;Again, many apps offer an option to set a permanent app title and your fixing attempts should start there. Some even allow having different titles when starting them with different profiles. Fantastic terminal emulator called &lt;a href=&quot;https://gnunn1.github.io/tilix-web/&quot;&gt;Tilix&lt;/a&gt; is a good example.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;creating-a-script-file-to-resize-multiple-windows&quot;&gt;Creating a script file to resize multiple windows&lt;/h2&gt;
+
+&lt;p&gt;Each wmctrl command only changes one window, so we need to invoke as many commands as windows we need changed.&lt;/p&gt;
+
+&lt;p&gt;To contain all these instructions, we will use a bash script. Traditionally, in its first line we need to point to the interpreter. Most often, the line you need is:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Then, in each line a separate wmctrl command. No need for colon, semicolon or any other sign by line end, just one command in each line.&lt;/p&gt;
+
+&lt;p&gt;The quickest way to write such script is to set up exactly the desktop layout we want. Align everything so it looks perfect. Then, use the mentioned xwininfo commands to get each window’s geometry and title. Write everything down.&lt;/p&gt;
+
+&lt;p&gt;Next, write wmctrl commands. Remember to convert geometry strings (WIDTHxHEIGHT+FROMLEFT+FROMTOP) to format that wmctrl accepts (0,FROMLEFT,FROMTOP,WIDTH,HEIGHT) in each command.&lt;/p&gt;
+
+&lt;p&gt;A complete example winresize.sh file looks like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; Firefox &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; Firefox &lt;span class=&quot;nt&quot;&gt;-N&lt;/span&gt; Firefox
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;Sublime Text&#39;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; qBittorrent &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;Google Chrome&#39;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;Tor Browser&#39;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; Kid3 &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; Pinta &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,394,17,1510,1044
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; LibreOffice &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,394,17,1510,1044
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; QuiteRSS &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; easystroke &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,942,18,961,1042
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; Telegram &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,16,95,359,605
+wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; deadbeef &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; 0,16,720,359,340&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Don’t forget to order them from most conflicting to least conflicting and follow each problematic application with another wmctrl command that renames it. Above, you see me doing it with Firefox.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;making-convenient-shortcuts-for-resizing&quot;&gt;Making convenient shortcuts for resizing&lt;/h2&gt;
+
+&lt;p&gt;The final step is to set up some way to execute our new script at will. Below are main 3 categories of options we have.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;create a bash alias for execution of that file (in file &lt;em&gt;~/.bash_aliases&lt;/em&gt; add line: &lt;em&gt;resizer=’/path/to/script.sh’&lt;/em&gt;), source that file (or restart the system if you don’t know how) and then execute it from console by writing &lt;em&gt;‘resizer’&lt;/em&gt;&lt;/li&gt;
+  &lt;li&gt;set up a system-wide keyboard shortcut for that script (different for every window manager, in i3 it’s as simple as adding this line: bindsym F9 exec /path/to/script.sh)&lt;/li&gt;
+  &lt;li&gt;create a mouse gesture to execute a script (easily achieved with easystroke, choosing ‘command’ option and then in command just pasting /full/path/to/our/script.sh&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;And voila! We now can reshape all our desktop with something as simple as a single command, pressing of a key, or a mouse gesture. We can create as many of those files and shortcuts as we want.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 14 Jan 2020 13:45:20 +0100</pubDate>
+        <link>http://www.chrisbl.com/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html</guid>
         
         
         <category>programs</category>
