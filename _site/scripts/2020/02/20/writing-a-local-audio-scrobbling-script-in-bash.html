@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Writing a local audio scrobbling script in Bash</title>
+  <meta name="description" content="Last.fm vs local scrobblingOnce merged with Audioscrobbler, Last.fm became the leading tool for tracking music history and probably remains so to this day, d...">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://www.chrisbl.com/scripts/2020/02/20/writing-a-local-audio-scrobbling-script-in-bash.html">
+  <link rel="alternate" type="application/rss+xml" title="Chris Blachewicz" href="http://www.chrisbl.com/feed.xml">
+  <link rel="shortcut icon" type="image/png" href="/favicon.png">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/"><img src="/img/logo.png" alt="chrisbl.com | home"></a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Writing a local audio scrobbling script in Bash</h1>
+    <p class="post-meta"><time datetime="2020-02-20T21:43:18+01:00" itemprop="datePublished">Feb 20, 2020</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p><br /></p>
+<h2 id="lastfm-vs-local-scrobbling">Last.fm vs local scrobbling</h2>
+<p>Once merged with Audioscrobbler, Last.fm became the leading tool for tracking music history and probably remains so to this day, despite being considerably less popular now than it used to be.</p>
+
+<p>One of the reasons why it became so popular was because it added a social dimension to music tracking. We can start a conversation about an interesting track we’ve both discovered recently, or concert which, as it turns out, we both attended.</p>
+
+<p>But what if someone doesn’t care about all that and just wants to track down history and store it? In that case, there is probably no reason to keep something as precious as lifetime of our musical adventures on a remote server.</p>
+
+<p>That applies even if the company is trustworthy. And people behind last.fm, both before and after <a href="https://techcrunch.com/2007/05/30/cbs-acquires-lastfm-for-280m/?guccounter=1">the CBS takeover</a>, have not given us any reasons doubt them.</p>
+
+<p>Anything can happen to a website though. A disgruntled employee on his way out might <a href="http://www.digitaljournal.com/article/249311">erase large portion of its data</a>.</p>
+
+<p>Just to be safe, we might want to download our entire listening history. In case of Last.fm, this isn’t always easy. The service itself used to provide downloading all user data, but for years that option is gone.</p>
+
+<p>There are other websites which can extract it. But if our history contains hundreds of thousands of items, there is big chance downloading those large files will fail at some point. Fetching data through those kinds of websites also takes a lot of time.</p>
+
+<p>When our history is out there with no backups, then even if that company has many backups on different servers, we can’t really be 100% sure that our data is safe. It needs to be backed up somehow.</p>
+
+<p>If downloading last.fm user history fails, the only option left is to write a script that will extract that data from their website, page by page. That can be tens of thousands of pages… and now we have to know web scraping.</p>
+
+<p>But it can’t just be a script that we run once and are done with it. It needs to check for new scrobbles periodically, so we lose as little data as possible.</p>
+
+<p>In other words, if we want to continue using a remote scrobbling service, but also want regular and reliable backup plan for our data, we’re in a world of trouble.</p>
+
+<p>Why not writing our own script and store musical history on our very own disk, right under our noses? Backing it up further from local file for 100% safety is so much simpler and faster, too.</p>
+
+<p>We won’t need any application that might spy on us, to whom we might one day lose password by accident, or which might stop working at one point due to some peculiar bug.</p>
+
+<p>And we need it to be able to scrobble, or our listening history comes to a halt until the problem is solved. Do we not listen to anything until we manage to, just to keep historical accuracy? That would be a questionable solution to a problem that we could do without.</p>
+
+<p>Local script means every time the system is on, scrobbling is on. 100% reliability. Let’s explore other arguments for it.</p>
+
+<p><br /></p>
+<h2 id="advantages-of-local-scrobbling">Advantages of local scrobbling</h2>
+
+<ul>
+  <li>the script is just few lines long, possible to fully understand quickly even for someone who has just started learning Bash</li>
+  <li>once everything is set up, it always works. if problematic strings are properly escaped/removed, nothing will break our script</li>
+  <li>data can be stored in any format we want. in case we change our mind at some point, converting it to another format using regex is very easy</li>
+  <li>with minor modification of this script, we can set up a local SQL server and directly feed it scrobbled data. keep in mind that if you don’t plan to do advanced stuff with that data, choosing database over plain CSV file for storage is overkill</li>
+  <li>we decide which tag fields should be stored</li>
+  <li>deleting unwanted items is as simple and powerful as our editor allows, as opposed to a click-fest if we decide to do it through a website</li>
+  <li>even decade-long logs still won’t take more than dozen megabytes, which by today storage standards is zero</li>
+  <li>we can extract whatever statistical information from it, imagination is the limit (but we have to do the work)</li>
+</ul>
+
+<p><br /></p>
+<h2 id="requirements">Requirements</h2>
+
+<ol>
+  <li>
+    <p>This tutorial uses Bash inside Linux as the environment of choice. We will be issuing system commands, which is always more natural from Unix shell languages than from other programming languages. The latter usually require importing system libraries first and might produce code that is harder to read.</p>
+  </li>
+  <li>
+    <p>For local scrobbling to be an easy ride, you have to use a music player that supports editing its title. Popular standard is for the player to display currently played track’s tag information as the application title. We need to be able to change from which tags we get the information.</p>
+
+    <p>If you intend to use graphical application and don’t care about library, <a href="https://deadbeef.sourceforge.io/">DeadBeef</a> comes highly recommended. For console interface, <a href="https://cmus.github.io/">CMUS</a> is a popular choice. This tutorial will work with DeadBeef.</p>
+  </li>
+  <li>
+    <p>You will need to download <strong>wmctrl</strong>. Your system package manager most likely has it. It is a small, very fast and very useful tool. I recommend getting to know it as it makes many interesting system scripts possible.</p>
+  </li>
+</ol>
+
+<p><br /></p>
+<h2 id="configuring-deadbeef">Configuring DeadBeef</h2>
+<p>Go to <strong>Edit</strong> -&gt; <strong>Preferences</strong> -&gt; <strong>GUI/MISC</strong> -&gt; <strong>Player</strong></p>
+
+<p>In the ‘<em>Titlebar text while playing</em>’ field, replace the current string with:</p>
+
+<blockquote>
+  <p>deadbeef: %artist%;%album%;%title%;%year%;%length%</p>
+</blockquote>
+
+<p>…or any tags you want, in any order. The beginning part is important, we will be identifying program title by a string ‘deadbeef: ‘, so it has to be there.</p>
+
+<p>You might want to change it to something more unique to never match that title elsewhere (in case you one day visit a website whose title contains ‘deadbeef: ‘ or a similar situation). If you decide to do so, remember to change it to something identical both in DeadBeef options and in line 4 of the script.</p>
+
+<p>In the ‘<em>Titlebar text while stopped</em>’ field, replace the current string with:</p>
+
+<blockquote>
+  <p>deadbeef - not playing</p>
+</blockquote>
+
+<p>It is important that there is no ‘*deadbeef: ‘ string here, as different string is a signal that deadbeef is not playing. If we’d add colon here, the script would assume that deadbeef is playing and that ‘- not playing’ is another currently playing track that needs to be added to a scrobbling history file.</p>
+
+<p><br /></p>
+<h2 id="csv-as-our-storage-format-of-choice">CSV as our storage format of choice</h2>
+
+<p>Semicolons between tags decrease readability, but we are gonna make our log a CSV file, with semicolons instead of commas.</p>
+
+<p>And so to make our life easier, DeadBeef will be displaying tag information already formatted for CSV file write. CSV file is like a table, with each line being a row and cell items are divided by a comma, semicolon or any other symbol you choose. Tab is another good option.</p>
+
+<p>We no longer have COMMA separated values, so it’s not a CSV file anymore, strictly speaking. But the idea is the same, so we keep calling it that anyway.</p>
+
+<p>Even though it doesn’t look pretty (compare it to YAML, for example), we keep using it for practical reasons. If we ever intend to analyze that data in any way (most popular artist this year, most listened to track ever…), parsing a CSV file is kid’s play.</p>
+
+<p>Yaml is the best option for readability, but files can be considerably larger because of it and it can be a nightmare to parse. CSV is simple and reliable.</p>
+
+<p>Because the format is very popular, many frameworks, libraries and other tools have CSV importing/exporting built-in. We won’t have to do any additional work to prepare the data ahead of our tasks. With YAML, we might as well need to hire an assistant parser ;)</p>
+
+<p>Remember that the character you chose as field separator can’t be present inside your music tags, or it will mess up your data. It’s good when all music tracks get pre-cleaned before being played for the first time. Check article list on this blog, I will write such a script and post it here sooner or later.</p>
+
+<p><br /></p>
+<h2 id="breaking-apart-the-script">Breaking apart the script</h2>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="nv">last_title_path</span><span class="o">=</span><span class="s1">'/path/to/scrobble-last.log'</span></code></pre></figure>
+
+<p>We start by pointing to Bash interpreter, which usually is in the main bin folder. Then, we create a variable which points to a string representing the path to a file which stores the last scrobbled track.</p>
+
+<p>We could store the last scrobbled track in memory to avoid disk writes. An average of one disk write every 3 or 4 minutes is not exactly the case of machine cruelty and it won’t have any impact on our hard disk lifespan. And if we write to disk, we don’t have to be afraid of losing data on reboot etc.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="k">while </span><span class="nb">true</span><span class="p">;</span> <span class="k">do</span></code></pre></figure>
+
+<p>This is a common programming use for an infinite loop. The idea is to start the script on system startup and repeat some sequence of events forever. For that, we need a loop that under no condition ever breaks.</p>
+
+<p>‘While’ checks for something being true (or truthy, depending on the language). True is always  true, it’s not gonna change at iteration 131. It guarantees the loop will run until terminated from outside (like <em>kill</em> command, or system reboot).</p>
+
+<p>Entire sequence of code will be executed line after line, after which next loop iteration will start, ie. it will begin to execute entire sequence again.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">	<span class="nv">curr_title</span><span class="o">=</span><span class="k">$(</span>wmctrl <span class="nt">-l</span> | <span class="nb">grep</span> <span class="nt">-Po</span> <span class="s2">"(?&lt;=deadbeef: ).+"</span><span class="k">)</span>
+	<span class="nv">prev_title</span><span class="o">=</span><span class="k">$(</span>head <span class="nt">-n1</span> <span class="nv">$last_title_path</span><span class="k">)</span></code></pre></figure>
+
+<p>The logic of the script is that every 5 seconds, we will check current track against previously played one and only if it’s different, we will put it in log.</p>
+
+<p>Wmctrl has a useful ‘-l’ argument, which lists all graphical windows currently open on all our monitors. It also states on which monitor each window currently resides and, what interests us here, program title.</p>
+
+<p>We wrap the system command in ‘<em>$()</em>’ and make variable point to its output. The command first lists all open windows, and then pipes it through grep. For the latter, we specify two options:</p>
+<ul>
+  <li>‘<em>-P</em>’, which changes default regex engine to Perl’s (best Regex version). it needs to be specified because the default grep regex engine does not support lookbehind</li>
+  <li>‘<em>-o</em>’, which only returns what regex matches, and not a whole line in which regex match was found</li>
+</ul>
+
+<p>A variable representing previously played track is set by printing it through <em>*head</em> with the ‘-n1’ option. On default, head prints the first ten lines of a specified file. We just want one line, the first one, which the ‘n’ option secures.</p>
+
+<p>We can’t just <strong>cat</strong> the whole file, because then we’d also get the newline. We don’t want it, so we have to remove it one way or the other.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">	<span class="k">if</span> <span class="o">[[</span> <span class="s2">"</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">!=</span> <span class="s2">"</span><span class="nv">$prev_title</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span></code></pre></figure>
+
+<p>After defining all the necessary variables, we get to the heart of our script. First, we check if the music player is playing anything, or the second test would produce an error and break our script if it doesn’t.</p>
+
+<p>Then, we check if the currently played track is different from the last played one.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">		<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">&gt;</span> <span class="s2">"</span><span class="nv">$last_title_path</span><span class="s2">"</span></code></pre></figure>
+
+<p>The next step is to replace the last played one with the currently played one inside our scrobble-last.log file. We need to compare future playback against this track from now on.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">		<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"</span><span class="k">$(</span>date +<span class="s1">'%Y.%m.%d;%H:%M'</span><span class="k">)</span><span class="s2">;</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="s1">'/path/to/scrobbles.csv'</span></code></pre></figure>
+
+<p>Here, we’re constructing the final string and appending it to our main scrobbling file. The desired format features date and time in front, either together in ISO 8601 format, or split by another separator <em>(in our case, a semicolon)</em>.</p>
+
+<p>It is convenient to keep it separate from date, as we might want to also extract hourly statistics. Having them separate saves us from additional step of extracting it from another field when we need it.</p>
+
+<p>Our file entries are added chronologically, so it’s good to have time of addition in front. And since date and time are always same width, readability does not suffer.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">	sleep 5</code></pre></figure>
+
+<p>Before closing the if statement content and the loop, we order the script to sleep for 5 seconds. You can do so every any other time interval. Linux’s sleep program is very flexible (unlike Python’s, for example), not only allowing seconds as a unit. The smallest unit (in theory) and the program default is seconds, though.</p>
+
+<p>We can even use floats, so you can order sleeping for .1 to get ten checks every second, giving a 50 times greater resolution than the default, and producing near-instant additions to the log. It is a trivial task for the processor, so you don’t have to worry about performance.</p>
+
+<p>For me, 5 seconds is precise enough. It’s gonna check everything anyway (unless all you listen to is grindcore), and few second delays are completely irrelevant for statistical operations I am doing on the scrobbled data.</p>
+
+<p>One case when setting lower time interval is important is when we need statistics of unfinished tracks. Then, we’d have to calculate timedelta between beginning of playback of one file and beginning of playback of the following one to see if it’s shorter than track length and by how far.</p>
+
+<p>If we need that ‘how far’, few seconds will seriously screw up the data and so sleep needs a very low value.</p>
+
+<p><br /></p>
+<h2 id="final-script">Final script</h2>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="nv">last_title_path</span><span class="o">=</span><span class="s1">'/path/to/scrobble-last.log'</span>
+<span class="k">while </span><span class="nb">true</span><span class="p">;</span> <span class="k">do
+	</span><span class="nv">curr_title</span><span class="o">=</span><span class="k">$(</span>wmctrl <span class="nt">-l</span> | <span class="nb">grep</span> <span class="nt">-Po</span> <span class="s2">"(?&lt;=deadbeef: ).+"</span><span class="k">)</span>
+	<span class="nv">prev_title</span><span class="o">=</span><span class="k">$(</span>head <span class="nt">-n1</span> <span class="nv">$last_title_path</span><span class="k">)</span>
+	<span class="k">if</span> <span class="o">[[</span> <span class="s2">"</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">!=</span> <span class="s2">"</span><span class="nv">$prev_title</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+		</span><span class="nb">echo</span> <span class="s2">"</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">&gt;</span> <span class="s2">"</span><span class="nv">$last_title_path</span><span class="s2">"</span>
+		<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"</span><span class="k">$(</span>date +<span class="s1">'%Y.%m.%d;%H:%M'</span><span class="k">)</span><span class="s2">;</span><span class="nv">$curr_title</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="s1">'/path/to/scrobbles.csv'</span>
+	<span class="k">fi
+	</span>sleep 5
+<span class="k">done</span></code></pre></figure>
+
+<p><br /></p>
+<h2 id="making-the-script-run-on-system-startup">Making the script run on system startup</h2>
+
+<p>We want the script to always run whenever the system is up.</p>
+
+<p>The alternative is to either remember to manually start it before playback (stupid), or have the script monitor music player for beginning of playback and turn itself on when the playback is on and turn off when the playback is off (pointless).</p>
+
+<p>While technically the second solution is cleaner, it has no practical meaning, while introducing a mechanism that perhaps could get broken one day if we don’t prepare for some rare exotic scenario bound to happen sooner or later.</p>
+
+<p>In any modern operating system, every second many things are happening in the background. Addition of another tool performing such trivial task is irrelevant.</p>
+
+<p>After we have our script in a file, we need to make it run on system startup. There are many options for that. Below are two popular ones.</p>
+
+<h3 id="put-it-in-crontab">Put it in crontab</h3>
+
+<p>Crontab file contains instructions on running applications. Every Linux user profile has its crontab file. We can put precise time when we want to run something, specify days of the week when we need it run, run it every x minutes and many more.</p>
+
+<p>It is a very flexible tool and it needs to be, since Linux is mainly used for servers, and servers often need complex task schedules.</p>
+
+<p>One special use in crontab is to replace all the normal specifications of when it needs to be run with <em>@reboot</em>, so the command is executed on system startup and only then. In the case of our scrobbler.sh file, the entry looks like so:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">@reboot	/path/to/scrobbler.sh</code></pre></figure>
+
+<p>That line needs to be added to the user crontab file, which can be edited by writing this command in console:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">crontab <span class="nt">-e</span></code></pre></figure>
+
+<p>‘<em>e</em>’ is short for ‘<em>edit</em>’. It doesn’t matter which line you put it in.</p>
+
+<h3 id="order-window-manager-to-run-it-on-startup">Order window manager to run it on startup</h3>
+
+<p>Window managers often have configuration files which are loaded on system startup. In those files, we can order starting up of applications, so they run on startup as well. This way, we ensure that every time we load window manager, the script gets loaded as well, which is what we want.</p>
+
+<p>I am using <strong>i3</strong>, in which I need to edit ~/.config/i3/config file and add this line to it:</p>
+
+<blockquote>
+  <p>exec /path/to/scrobbler.sh</p>
+</blockquote>
+
+<p><br /></p>
+<h2 id="limitations">Limitations</h2>
+
+<p>One feature this script is lacking is an ability to detect same track being played few times in a row.</p>
+
+<p>The way the script is designed, if we listen to the same track for half a day, the script does not see track change, and so it cannot see that we got a bit carried away with it.</p>
+
+<p>This is one area in which scrobbler applications perform better. Remember that we’re comparing it to 11 lines of code ;)</p>
+
+<p>Since I wanted to write a basic scrobbler, I did not implement checking for track repeats. I’m sure there are many ways to solve this problem, but I can’t find one that’s good enough and short enough to implement into the script while still keeping it short and simple.</p>
+
+<p>One is to convert track length to seconds (so we get single integer for comparison) and then monitor if the playback of that track spans for more than its length. The refresh in which it does for the first time, we append the log with another instance of that track.</p>
+
+<p>That solution is not perfect though. If we pause the track mid-way for 2 hours and then resume it, it will add second line to log even though we are listening to it once.</p>
+
+<p>Another thing is that services like last.fm have many algorithms for filling out the missing data. If tags contain misspelt information, they check against their databases to try and find a guaranteed match to correct it. We don’t have to do this, it gets done automatically.</p>
+
+<p>With our solution, everything that is inside tags is logged directly, and so it is our responsibility to make sure the data is correct. It’s more work, but it gives better results than an automated guessing game.</p>
+
+<p>Yet another problem is logging playback from services like Spotify. Popular services of this kind support scrobbling to last.fm. It will get logged the same as if we’d be listening through the music player.</p>
+
+<p>You can try to go around it, but it will most likely be a messy road. You can set up a script to monitor music streaming service applications and extract data from their titles instead, but maybe the customization options for title display are not built into those applications and we’ll miss some of the data that we want, like track length.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Chris Blachewicz</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>Chris Blachewicz</li>
+          <li><a href="mailto:call911@pm.me">call911@pm.me</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/chris-bz"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">chris-bz</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
