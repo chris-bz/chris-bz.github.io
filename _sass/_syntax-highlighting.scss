@@ -3,9 +3,11 @@
  */
 .highlight {
     background: #fff;
+    tab-size: 2;
     @extend %vertical-rhythm;
 
     .highlighter-rouge & {
+        tab-size: 2;
       background: #eef;
     }
 

@@ -103,8 +103,10 @@ code {
 
 pre {
   padding: 8px 12px;
+  tab-size: 2;
   overflow-x: auto; }
   pre > code {
+    tab-size: 2;
     border: 0;
     padding-right: 0;
     padding-left: 0; }
@@ -153,7 +155,7 @@ pre {
   border-top: 5px solid #2B3A84;
   border-bottom: 1px solid #2B3A84;
   min-height: 56px;
-  background: url("/img/tmp/bg-header.png"), #E0E0E0;
+  background: url("/img/bg-header.png"), #E0E0E0;
   position: relative; }
 
 .site-title {
@@ -220,8 +222,10 @@ pre {
  * Site footer
  */
 .site-footer {
-  border-top: 1px solid #e8e8e8;
-  padding: 30px 0; }
+  box-shadow: 0 -1px 6px 0;
+  border-top: 1px solid #2B3A84;
+  padding: 30px 0;
+  background: url("/img/bg-header.png"), #E0E0E0; }
 
 .footer-heading {
   font-size: 18px;
@@ -327,8 +331,10 @@ pre {
  * Syntax highlighting styles
  */
 .highlight {
-  background: #fff; }
+  background: #fff;
+  tab-size: 2; }
   .highlighter-rouge .highlight {
+    tab-size: 2;
     background: #eef; }
   .highlight .c {
     color: #998;

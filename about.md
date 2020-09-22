@@ -19,9 +19,11 @@ I am a relatively young Linux user (only 4 years as of writing this), but since 
 
 Entire lifetime of Windowsing, I wanted to do things that the system did not allow, and after discovering that in Linux most of it can be done one way or another, I got very interested.
 
-This blog is mostly about those interesting customization options, applications working in concert to improve the daily system use.
+This blog is mostly about those customization options, applications often working in concert to improve the daily system use.
 
 Since I'm also in love with Python and prefer it over Bash for more advanced system scripts, some of those solutions will require its knowledge, unless you just want to copy-paste entire code without modifications.
+
+While Bash is better if our script is command-line-heavy, Python is generally cleaner and easier to understand and refactor.
 
 <br>
 ### About me
@@ -32,6 +34,8 @@ For majority of my professional career, I was a web developer, mostly creating w
 
 Many years ago, I wanted to learn programming and approached C++, but didn't go far with that. It changed few years ago when I got familiar with Python basics.
 
-It is an absolutely amazing language and has insane amount of high quality libraries of all sorts. And so I switched from web development, which I was always finding a bit boring, to programming in Python, which is everything but.
+It is an absolutely amazing language and has insane amount of high quality libraries of all sorts. Literally for every crazy idea I have, there turns out to be a perfect library. When the language packs that much functionality, life of programmer is so much easier and more comfortable!
 
-Apart from Python, I work with bash, linux servers, html, css, django, jekyll, pandas, sql databases and more. For most tasks, it's usually multiple tools at once. 
+Currently, I am in the process of switching from web development to programming, with web development only to compliment it.
+
+Apart from Python, I work with Bash, Linux servers, HTML, CSS, Django, Jekyll, Pandas, SQL databases and few more tools to lesser degree.

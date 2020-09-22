@@ -142,9 +142,11 @@ code {
 
 pre {
     padding: 8px 12px;
+    tab-size: 2;
     overflow-x: auto;
 
     > code {
+        tab-size: 2;
         border: 0;
         padding-right: 0;
         padding-left: 0;

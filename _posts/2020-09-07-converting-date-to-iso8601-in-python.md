@@ -50,10 +50,9 @@ Below I break apart the code. If you just want the entire thing to copy-paste, c
 <br>
 ## Code breakdown
 
-The converter is best written as a function, convenient to keep in a separate python helper file and imported as needed. It takes a date, ie. a string hopefully containing all the ingredients we need.
 > def toiso8601(date):
 
-First, we write a sub-function that converts a month, written as a word, to a number (still written as string). This sequence can be potentially executed twice in our code, so there is no point repeating the whole thing. Instead, we make a function of it and call it when needed.
+The converter is best written as function, convenient to keep in separate python helper file and imported as needed. It takes date, ie. a string hopefully containing all the ingredients we need.
 
 {% highlight python %}
 	def month_to_digit(month_as_word):
@@ -70,15 +69,21 @@ First, we write a sub-function that converts a month, written as a word, to a nu
 		return month_final
 {% endhighlight %}
 
+First, we write a sub-function that converts month, written as word, to a number (still written as string). This sequence exists twice in our code, so there is no point repeating the whole thing. Instead, we make a function of it and call it when needed.
+
 There are two types of month words popular in writing dates in English. The first one is full words, the second the first 3 letters of each word. In ISO 8601, month is a two-digit number. And so we have to convert.
 
-For that, we have two dictionaries, one for each type. The keys are the month-words, the values are numbers to which they convert. Alternative is to create one dictionary and test for full name against full key name, or for first three letters of the parsed string against the first three letters of each dictionary key, saving us from the need to create the second dictionary.
+For that, we have two dictionaries, one for each type. The keys are the month-words, the values are numbers to which they convert.
+
+If it feels right, you can also create one dictionary and test for full name against full key name, or for first three letters of the parsed string against the first three letters of each dictionary key, saving us from the need to create the second dictionary. It reduces redundancy in our code, but makes the script perform worse.
 
 Notice that the numbers are in quotes. They are strings, first because '03' is not a number understandable by Python, second because the entire process is taking string input and outputting another string. There is no reason to switch to any other data type at any point, as sooner or later it would have to be converted back into a string.
 
-If conversion fails (ie. the word doesn't match a month name in either dictionary), we set month_final to None. At the end of our function, we make a condition that year, month and day all have to be set and only then do we generate and return the final date. Otherwise, we'd let some gibberish word posing as month pass through to the final string.
+If conversion fails (ie. the word doesn't match month name in either dictionary), we set month_final to None. At the end of our function, we make a condition that year, month and day all have to be set and only then do we generate and return the final date. Otherwise, we'd let some gibberish word posing as month pass through to the final string.
 
-There is no ISO 8601 date without a year, and setting it to some default is a risky business. You could, for example, decide to go with '0000'. If such year has no reasons to exist in our data (let's say we have a movie database), setting it to such would conform to the ISO 8601 standard while giving us a valuable information that that particular piece of data is missing. In some datasets, the data has to exist, even if our database tool of choice allows setting datetime fields to be empty. This would force us to use a solution like that.
+There is no ISO 8601 date without year, and setting it to some default is risky business. You could, for example, decide to go with '0000'. If such year has no reasons to exist in our data (let's say we have a movie database), setting it to such would conform to the ISO 8601 standard while giving us a valuable information that that particular piece of data is missing.
+
+In some datasets, the data has to exist, even if our database tool of choice allows setting datetime fields to be empty. This would force us to use a solution like that.
 
 Since for my usecase it's not a problem, if a four-digit number indicating year is not found, the function informs about the problem, returns None and that's the end of it.
 
@@ -90,19 +95,19 @@ Since for my usecase it's not a problem, if a four-digit number indicating year 
 	year = year[0]
 {% endhighlight %}
 
-The last line of that chunk of code extracts the string from a regex object. If we had it done earlier (not knowing if regex found anything), pointing to a non-existing item would throw an error. That behavior we do not want, as it would force us to use it inside a 'try' clause.
+The last line of that chunk of code extracts the string from a regex object. If we had it done earlier (not knowing if regex found anything), pointing to a sometimes non-existing item would throw an error. That behavior we do not want, as it would force us to use it inside a 'try' clause.
 
 After setting up a year variable, we now need to delete this number from the date string and only seek in that new variable. Otherwise, it would extract sub-numbers from it as potential month and day numbers.
 	date_no_year = re.sub(year, '', date)
-
-Then, we proceed to look inside that newly cut string for a word indicating month and as many sets of digits as we can find. The combination of these two findings are the base for our final assessments on what data we have and how to process it.
 
 {% highlight python %}
 	month_day = re.findall('\d\d?', date_no_year)
 	month_word = re.search('[A-Za-z]{3,}', date_no_year)
 {% endhighlight %}
 
-For that, we use regex module's 'findall' and 'search' functions. Both month and day can be a single, or a double-width string (hence '?' by the second one, meaning "0 or 1 of it"). Month words only contains letters and all the words in both dictionaries are of 3+ length. '{3,}' means "minimum 3, maximum unspecified, so equal or higher than 3".
+Then, we proceed to look inside that newly cut string for word indicating month and as many sets of digits as we can find. The combination of these two findings are the base for our final assessments on what data we have and how to process it.
+
+For that, we use regex module's 'findall' and 'search' functions. Both month and day can be single, or double-width string (hence '?' by the second one, meaning "0 or 1 of it"). Month words only contain letters and all the words in both dictionaries are of 3+ length. '{3,}' means "minimum 3, maximum unspecifiedO. So equal to or higher than 3". Just like with Python slices when we skip one side.
 
 Being specific here is important. If someone would surprise our converter with a peculiar date, like 1969x05x20, our function would still work and omit 'x' separators, as they are only of length 1. Not demanding three or more letters in a word, those x-es would be added needlessly as separate 'month or day' items and cause the script to fail to fullfill its duty and return None.
 
@@ -116,7 +121,9 @@ Now we get into different scenarios.
 			day = '0' + day
 {% endhighlight %}
 
-First is the case of month being a word (as in containing letters, not in regex sense, where digits also qualify as words) and month_day search returning only one object. If we have a year, some word and some digit, it is safe to assume that the word is a month and the digit is a day. So we set up both variables, giving us a first potential complete set of year, month and day variables.
+First is the case of month being a word (as in containing letters, not in regex sense, where digits also qualify as word characters) and month_day search returning only one object.
+
+If we have year, some word and some digit, it is safe to assume that that word is month and the digit is day. So we set up both variables, giving us a first potential complete set of year, month and day variables.
 
 The last two lines are important. ISO 8601 does not accept single-digit numbers, neither for date nor for time. If the input format is 'Sep 1, 1995', the day needs '0' in front of 1.
 
@@ -128,13 +135,13 @@ Because strings are iterable in Python, it is very easy to check for its length 
 		day = '01'
 {% endhighlight %}
 
-The first alternative check is for no word indicating month and just a single digit found. In most cases, when we only have a year and a single number, that single number is a month. Nobody writes year and day of a month that is not specified.
+The first alternative check is for no word indicating month and just single digit found. In most cases, when we only have year and single number, that single number is month. Nobody writes year and day of a month that is not specified.
 
 In rare cases, this extra number means day of year. This converter is not equipped to deal with such scenario and if it is indeed what you have to deal with, you'd have to use Python's datetime module to convert it to a final date. It is easily achievable once you know this primary tool for dealing with dates in Python.
 
-In many scenarios, when the day is not found, we might want the whole date to be invalid. For my use, I still need the date, which is only used for getting approximate guesses to another object with another date (the ones with smallest timedelta between them being paired), so few days off are much less hurtful than not having a date at all.
+In many scenarios, when the day is not found, we might want the whole date to be invalid. For my use, I still need the date, which is only used for getting approximate guesses to another object with another date (the ones with smallest timedelta between them being paired), so few days off are much less hurtful than not having date at all.
 
-If you want to not return any date if the day is missing, it is easy to change in this function. Because the final date generation will fail if any of the date elements is not set, all you have to do is change "day = '01'" to "day = None" in two places.
+If you want to not return any date if the day is missing, it is easy to change in this function. Because final date generation will fail if year, month or day is not set, all you have to do is change "day = '01'" to "day = None" in two places.
 
 {% highlight python %}
 	elif month_word and not month_day:
@@ -142,7 +149,7 @@ If you want to not return any date if the day is missing, it is easy to change i
 		day = '01'
 {% endhighlight %}
 
-Next is a straightforward case, where we have a word for month, but no extra number that would represent a day. Here, again we blindly set the day to first of the month.
+Next is a straightforward case, where we have word for month, but no extra number that would represent day. Here, again we blindly set the day to first of the month.
 
 {% highlight python %}
 	elif not month_word and len(month_day) == 2:
@@ -166,9 +173,9 @@ Finally, we write what to do if all our previous conditions failed. If we got to
 
 Three digits make it impossible to assess which one is month and which one is day. Usually, it means that the string we got is not date at all, or date with some unfortunate extra luggage.
 
-One way or the other, under this circumstance it is best to not play wild guesses and instead call it quits. Print will inform us about the problem in a terminal window. Setting year to None will make the final condition fail, as it tests for the presence of year, month and day. 'None' is faulty in Python, it indicates failure, and so the condition is not met.
+One way or the other, under this circumstance it is best to not play wild guesses and instead call it quits. Print will inform us about the problem in terminal window. Setting year to None will make the final condition fail, as it tests for the presence of year, month and day. 'None' is faulty in Python, it indicates failure, and so the condition is not met.
 
-The final piece of our code checks for the presence of all objects and constructs a string from it.
+The final piece of our code checks for presence of all objects and constructs a string from it.
 
 The last return is silent and applies only when that condition is not met. Every function in Python returns None, if not specified elsewhere. Here, we want to return date, but only if we have all the ingredients. If not, there are no final return instructions, which means the function will return 'None'.
  
