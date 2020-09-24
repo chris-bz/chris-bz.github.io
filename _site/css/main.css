@@ -67,10 +67,10 @@ h1, h2, h3, h4, h5, h6 {
  * Links
  */
 a {
-  color: #353535;
+  color: #3b50b6;
   text-decoration: none; }
   a:visited {
-    color: #686868; }
+    color: #2B3A84; }
   a:hover {
     color: #E78200;
     text-decoration: none; }
@@ -289,7 +289,7 @@ pre {
 
 .post-meta {
   font-size: 14px;
-  color: #828282; }
+  color: #c25c00; }
 
 .post-link {
   display: block;

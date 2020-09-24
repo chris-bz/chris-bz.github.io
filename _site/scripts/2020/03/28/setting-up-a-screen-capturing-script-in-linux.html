@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Setting up a screen capturing script in Linux</title>
+  <meta name="description" content="Microsoft Windows came a long way since just storing desktop image in clipboard after pressing print screen key and requiring us to open it in an image edito...">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://www.chrisbl.com/scripts/2020/03/28/setting-up-a-screen-capturing-script-in-linux.html">
+  <link rel="alternate" type="application/rss+xml" title="Chris Blachewicz" href="http://www.chrisbl.com/feed.xml">
+  <link rel="shortcut icon" type="image/png" href="/favicon.png">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/"><img src="/img/logo.png" alt="chrisbl.com | home"></a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Setting up a screen capturing script in Linux</h1>
+    <p class="post-meta"><time datetime="2020-03-28T11:13:54+01:00" itemprop="datePublished">Mar 28, 2020</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Microsoft Windows came a long way since just storing desktop image in clipboard after pressing print screen key and requiring us to open it in an image editor, pasting and only then saving to disk.</p>
+
+<p>Windows 10 has <em>Snipping Tool</em> and <em>Snip &amp; Sketch</em>, which together give many interesting methods of selecting parts of the screen we want to capture. It shows unfinished work that there are two tools for the same type of job, but that’s just final bit of awkwardness Microsoft has to sort out.</p>
+
+<p>Most Linux distributions are also more equipped these days. But what if we use some niche window manager that doesn’t have this functionality built-in? Or if it stopped working for some reason and we can’t find a way to make it work again?</p>
+
+<p>Fortunately, so long as we can boot our window manager in Linux, we can make it work with some basic knowledge and just one tool (which might even be installed by default in your distro).</p>
+
+<p>You will need to know how to set up system shortcuts, though. Every window manager on Linux can probably do that. In case you don’t know how, make a Google search for ‘how to set keyboard shortcuts in [your Linux distribution, or window manager here]’.</p>
+
+<p>This tutorial will explain how to do that in the i3 window manager.</p>
+
+<p><br /></p>
+<h2 id="what-does-this-script-do">What does this script do?</h2>
+
+<p>Pressing <strong>print screen</strong> will capture the screen and save it to an image file, in any location you want. You can choose image format as well, all the popular ones are supported.</p>
+
+<p>Pressing <strong>scroll lock</strong> (another ever-busy key on standard keyboards) will also do that, but after saving, it will open an image editor of your choice with that file loaded.</p>
+
+<p><small>
+It is a common task to screen capture something, some video stream we’re watching perhaps. But before we post it online, we want to mark some interesting part of our screen with a circle, or point to it with an ugly-looking arrow.
+<br />
+<br />
+Instantly opening image editor is a lot more convenient than saving the image to disk, then manually navigating to the folder in which the image resides and opening it. If that’s not enough, we would usually need to use the ‘open with’ option if plain image viewer and not editor is set as the default program for executing images.
+</small></p>
+
+<p>After pressing the print screen key, the script first checks the folder in which we save capture files if any already exist. If they do, it takes the number of the newest one (the one with biggest number), increments that number by one and saves our new screen capture with that number.</p>
+
+<p>In other words, if you already have print-screen1.jpg and print-screen3.jpg (let’s assume 2 has been deleted in the meantime), the script will create print-screen4.jpg instead of substituting print-screen1.jpg, or creating print-screen2.jpg.</p>
+
+<p>If there are no print-screen[num] files in folder, it creates print-screen1.jpg.</p>
+
+<p>This is hands-down the best default behavior, as it retains chronology and prevents sometimes unwanted file loss.</p>
+
+<p><br /></p>
+<h2 id="requirements">Requirements</h2>
+
+<p>We’re going to use <strong>Bash</strong> as our shell language of choice (default in most popular Linux distributions).</p>
+
+<p>The only program we need for the job is <strong>import</strong>. It is part of Image Magick.</p>
+
+<p>Image Magick is probably the single most powerful tool for command line slash scripting image processing that was ever written. It is worth getting to know it if you deal with images a lot and feel like you could automate some of your tasks.</p>
+
+<p>One example of its use is having <strong>watch</strong> monitor a particular folder where we save memes (the most important images on anyone’s hdd). We can order Image Magick tools to check if maximum resolution is not bigger than something and if that’s the case, reduce it to some sensible maximum.</p>
+
+<p>Next, the script could check if those meme files have compression level higher than, let’s say 90, and if they do, we compress them to 90 to save disk space. Then, we could automatically move those files to our final meme directory.</p>
+
+<p>This is a very basic example, but it already shows how useful this set of tools can be.</p>
+
+<p>You will most likely find it in your system repository. It is spelled <strong>imagemagick</strong>.</p>
+
+<p><br /></p>
+<h2 id="code">Code</h2>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="nv">ps_numb</span><span class="o">=</span><span class="k">$(</span><span class="nb">ls</span> <span class="nt">-v</span> /path/to/print-screens/ | <span class="nb">grep </span>print-screen | tail <span class="nt">-n1</span> | <span class="nb">grep</span> <span class="nt">-Po</span> <span class="s1">'\d\d?(?=\.png)'</span><span class="k">)</span>
+<span class="nv">ps_numb</span><span class="o">=</span><span class="k">$((</span><span class="nv">$ps_numb</span> <span class="o">+</span> <span class="m">1</span><span class="k">))</span>
+import <span class="nt">-window</span> root <span class="nt">-crop</span> 1920x1080+0+0 /path/to/print-screens/print-screen<span class="k">${</span><span class="nv">ps_numb</span><span class="k">}</span>.png</code></pre></figure>
+
+<p><br /></p>
+<h2 id="code-explanation">Code explanation</h2>
+
+<p>Thanks to piping, we accomplish many tasks in our first actual line of code:</p>
+<ul>
+  <li><strong>ls -v</strong> - ‘<em>ls</em>’ lists files in specified directory, ‘<em>-v</em>’ makes sure numbers are sorted properly (with default sorting, for example, 100 is before 2… because 1 is smaller than 2. we do not want that!)</li>
+  <li><strong>grep</strong> - searches directory list for files/directories containing a string ‘print-screen’</li>
+  <li><strong>tail -n1</strong> - ‘<em>tail</em>’ displays last lines of our result list, ‘<em>-n1’</em> narrows it down to just last line, which we’ve made sure is the one with the biggest number</li>
+  <li><strong>grep -Po…</strong> - grep extracts single or double digit number from that filename (you can append a second ‘<em>\d?</em>’ if for some reason you can end up with 100+ files).</li>
+  <li><strong>(?=.png)</strong> - it is a lookahead, meaning we only look for digits which are instantly followed by ‘.png’.</li>
+</ul>
+
+<p>That lookahead is a safety measure against directories that contain a string ‘<em>print-screen</em>’. The script may one day encounter such named directory, but it is not likely to encounter a directory named […]print-screen[num][maybenum].png[…].</p>
+
+<p>Even if such rare thing happens, the script will create file one number higher than the number in this directory, assuming there are no print-screen files with higher numbers. A rare worst case scenario and still nothing hazardous happens.</p>
+
+<p>The second line does arithmetic (which we enable with double parentheses). It adds one to append that number to file name later. If you want a different numbering order, you can change it easily here.</p>
+
+<p><small>
+Bash can take dynamic typing to extreme, as is the case here.
+<br />
+<br />
+If previous line returns nothing (if there are no print-screen files in our folder, or the last sorted one has no digits followed by ‘<em>.png</em>’), the next line takes that nothing and converts it to something arithmetically viable, because it now sits inside double parentheses, which like mentioned before, is used for arithmetic operations.
+<br />
+<br />
+Because there is no data (or false, or an empty string - those are guesses because we can’t check data type easily in Bash, someone more knowledgable would have to check ;))… that data is converted to 0, to make it viable in the scary and dangerous world of mathematics. And 0+1 gives 1, saving us from writing our script in a more complicated way to ensure that if there are no print-screen files, proper number for new filename is still generated.
+</small></p>
+
+<p>Notice the file extension in second line and in forth. Change it to any image format you want and test it just to be sure that the import tool supports such format.</p>
+
+<p>The third line is where the magick happens. Import tool is told to capture main display window with ‘<em>-window root</em>’ option.</p>
+
+<p>Just like xwininfo, xprop and many other useful X tools, import waits for user click to specify window for capture. But we don’t want to capture just one program window, but entire screen, and we want it to happen automatically instead of requiring us to click each time. That’s why we have to be specific.</p>
+
+<p>If you only have one monitor, you can safely remove ‘<em>-crop 1920x1080+0+0</em> ‘ part. I have two monitors, first one set to the 1080p resolution. Import with ‘*-window root *’ captures content from all monitors to one glued together image. I want to get the left-most monitor’s content only, so after capturing, I need to crop it to position and dimensions of my first monitor.</p>
+
+<p>That is why the script specifies geometry (you can read more about geometry in <a href="/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html">this article</a>). Most people only have one monitor and while the script will work for them as well, they won’t need that bit of code.</p>
+
+<p>But because it’s there, it will also work for people who have more than one. If yours has different resolution than 1920x1080, change those numbers. If you don’t want the left-most one’s contents, replace ‘<em>+0+0</em>’ with proper starting pixel location.</p>
+
+<p><br /></p>
+<h2 id="binding-the-script-to-a-key">Binding the script to a key</h2>
+
+<p>Like mentioned at the start, if your window manager is not i3, search Google for how to add system-wide keyboard shortcuts in your Linux distribution/window manager.</p>
+
+<p>Usually, you can set key to execute a command. Instead of system command, point to a file (with full path, so system knows where to look for it).</p>
+
+<p>In i3, that operation is very simple. We edit this file: ‘<em>~/.config/i3/config</em>’, and add these two lines:</p>
+
+<blockquote>
+  <p>bindsym Print exec /path/to/file.sh<br />
+bindsym Scroll_Lock exec “import -window root -crop 1920x1080+0+0 /location/to/save/image.jpg; pinta /location/to/save/image.jpg”</p>
+</blockquote>
+
+<p>As far as I know, i3 can only execute single statement, so to execute two, we need to sneak them in as one command inside quotes.</p>
+
+<p>Editing does not require automatic numbering of the following files. After all, we capture, edit and save each time. And so we only use the import command here and not entire script. Be sure it is called with exact same options and parameters as inside your script if you want to capture the same screen area.</p>
+
+<p><em>Print</em> and <em>Scroll_Lock</em> keys can be changed to any other ones you want. A list of all available key names which i3 understands can be found <a href="http://xahlee.info/linux/linux_show_keycode_keysym.html">here</a>.</p>
+
+<p>Remember that binding a key, or key combination directly in window manager usually means no application can use it. Otherwise, we’d have one key potentially execute multiple unrelated actions, potentially leaving poor user in the state of confusion ;)</p>
+
+<p>Window managers execute instructions they have for the key and don’t send the signal further. Programs don’t even know that the key was pressed.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Chris Blachewicz</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>Chris Blachewicz</li>
+          <li><a href="mailto:call911@pm.me">call911@pm.me</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/chris-bz"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">chris-bz</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
