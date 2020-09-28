@@ -5,9 +5,128 @@
     <description>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</description>
     <link>http://www.chrisbl.com/</link>
     <atom:link href="http://www.chrisbl.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 24 Sep 2020 22:48:36 +0200</pubDate>
-    <lastBuildDate>Thu, 24 Sep 2020 22:48:36 +0200</lastBuildDate>
+    <pubDate>Mon, 28 Sep 2020 23:03:40 +0200</pubDate>
+    <lastBuildDate>Mon, 28 Sep 2020 23:03:40 +0200</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
+    
+      <item>
+        <title>JPG compression guide for Linux</title>
+        <description>&lt;h2 id=&quot;basics&quot;&gt;Basics&lt;/h2&gt;
+
+&lt;p&gt;Almost all jpg files out there are compressed to some extent. The compression is on a scale of 1 to 100, 1 being most compressed (do not ever go that low!), 100 meaning no compression.&lt;/p&gt;
+
+&lt;p&gt;Recompression reduces image quality. Exactly how much, it varies. With some images, recompressing 100 times with the same compression level will barely decrease image quality, but other times even single recompression can introduce ugly artifacts.&lt;/p&gt;
+
+&lt;p&gt;That’s why we should recompress only when changing compression level by a considerable amount, and do it as rarely as possible.&lt;/p&gt;
+
+&lt;p&gt;Another important thing is to recompress only to lower levels. Recompressing to higher level means the image will take more hard disk space, but at best it will still only look as good as it did before the last compression.&lt;/p&gt;
+
+&lt;p&gt;Image quality can’t be magically improved by changing to higher compression level, just like details of a completely blurred image can’t be made sharp just by increasing image sharpness - the sharp contours and exact object colors just aren’t there behind an image, waiting to be exposed.&lt;/p&gt;
+
+&lt;p&gt;Recompression to the same quality is always a bad idea. If the previous compressor did a terrible job, the damage is done already. We can only go lower on the scale and test if it’s possible to save space while doing minimum of extra damage.&lt;/p&gt;
+
+&lt;p&gt;Usually the only good reason to recompress is to reduce image quality so it can take less space on hard disk, or so it can be sent faster on the internet. If you don’t have these concerns, don’t compress. We can always compress later, but once we lose that image quality, we can never get it back.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;finding-out-compression-level-of-an-image&quot;&gt;Finding out compression level of an image&lt;/h2&gt;
+
+&lt;p&gt;You can check the level of jpg file compression by installing Image Magick (more about it soon) and then running this shell command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;identify &lt;span class=&quot;nt&quot;&gt;-format&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;%Q&#39;&lt;/span&gt; filename.jpg&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Replace &lt;em&gt;filename&lt;/em&gt; with the name you want to inspect.&lt;/p&gt;
+
+&lt;p&gt;It is extremely useful for scripting purposes to be able to check for image compression level.&lt;/p&gt;
+
+&lt;p&gt;Let’s say we run a forum website with many users who upload many images. We don’t want those images to be just left there on the server.&lt;/p&gt;
+
+&lt;p&gt;Going down from 100 compression (no compression) to just 95 rarely produces visible image problems, but it can drastically reduce size!&lt;/p&gt;
+
+&lt;p&gt;So, in whichever programming language we’re running on a server, we can write a script to get each incoming image’s compression level and if it’s above a desired number, recompress it with jpegoptim to whichever we want.&lt;/p&gt;
+
+&lt;p&gt;You can also check compression level in graphical programs. Look for ‘image properties’, or something similar, in your program’s drop-down menus. Some graphic editors ask for compression level each time we save new image, or even re-save an already existing one.&lt;/p&gt;
+
+&lt;p&gt;By default, the slider in some of those programs shows program default for the file extensions, but in others it shows current image compression. You have to find out for yourself how your program behaves.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;saving-uncompressed-image-compressing-with-another-tool&quot;&gt;Saving uncompressed image, compressing with another tool&lt;/h2&gt;
+
+&lt;p&gt;We’ve established that we want to compress as few times as possible and select the best tool for the job. Let’s go through an example to illustrate that approach.&lt;/p&gt;
+
+&lt;p&gt;In &lt;a href=&quot;/scripts/2020/03/28/setting-up-a-screen-capturing-script-in-linux.html&quot;&gt;another post&lt;/a&gt;, I presented a script that (in short) captures screen content to a file. It uses the &lt;strong&gt;import&lt;/strong&gt; tool, which is part of Image Magick.&lt;/p&gt;
+
+&lt;p&gt;If you don’t understand part of its command, check the linked article where it is explained in detail. Here, we will use it in concert with another tool.&lt;/p&gt;
+
+&lt;p&gt;There are other command line programs whose only purpose is to compress images. For the jpg format, probably the most popular one right now is &lt;strong&gt;jpegoptim&lt;/strong&gt; - and that’s what we’re going with.&lt;/p&gt;
+
+&lt;p&gt;If we really want best image quality for the size, we need to use a specialized tool like that, instead of assuming that the program that produced the image has good algorithm. It might, it might not. We will use it in this short tutorial.&lt;/p&gt;
+
+&lt;p&gt;Jpegoptim probably doesn’t ship with any Linux distro, so you have to install it manually. First, try from your distro’s official repository.&lt;/p&gt;
+
+&lt;p&gt;Now, if we order import to save screen capture to a .jpg file, it will compress it to 85, which is the program default.&lt;/p&gt;
+
+&lt;p&gt;But since jpegoptim will do a better job optimizing its quality, we don’t want import to compress it at all. The first compression might seriously worsen image quality.&lt;/p&gt;
+
+&lt;p&gt;We can change import’s compression level to any other percentage we want by appending the import command with ‘&lt;em&gt;-quality 95&lt;/em&gt;’ (or any other number). We need to order it not to compress. We do that by adding ‘-quality 100’ to the command.&lt;/p&gt;
+
+&lt;p&gt;Jpegoptim generally has two modes. The first, default one, optimizes the image, leaving its compression level unchanged. It does not recompress (so no quality loss), but only improves compression to squeeze more out of it.&lt;/p&gt;
+
+&lt;p&gt;The second we invoke with the ‘&lt;em&gt;-m&lt;/em&gt;’ option. Executing this command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;jpegoptim &lt;span class=&quot;nt&quot;&gt;-m70&lt;/span&gt; filename.jpg&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;will recompress filename.jpg with 70% compression, using its own optimized algorithm.&lt;/p&gt;
+
+&lt;p&gt;Let’s take a real life use case. We have a monitor which displays some sort of statistics. Every hour, we need to capture content of that monitor to a file for reference.&lt;/p&gt;
+
+&lt;p&gt;We only want to have the latest reference image, so we want it to always write to the same file, overwriting its content every hour.&lt;/p&gt;
+
+&lt;p&gt;Depending on some conditions, we might want to rename the file by hand and move it to other folder with images. And since in that folder files will stay forever, we need to take precautions so one day this folder’s size does not become a problem. We need to compress.&lt;/p&gt;
+
+&lt;p&gt;Our Bash script file only needs to contain two lines, plus path to interpreter on line one:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/bash&lt;/span&gt;
+import &lt;span class=&quot;nt&quot;&gt;-window&lt;/span&gt; root &lt;span class=&quot;nt&quot;&gt;-crop&lt;/span&gt; 2560x1440+0+0 &lt;span class=&quot;nt&quot;&gt;-quality&lt;/span&gt; 100 /path/to/filename.jpg
+jpegoptim &lt;span class=&quot;nt&quot;&gt;-m90&lt;/span&gt; /path/to/filename.jpg&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Import captures our 1440p left-most monitor’s screen and saves it to an uncompressed jpg file. Jpegoptim then finishes the work by compressing it.&lt;/p&gt;
+
+&lt;p&gt;To generate that image every hour, we save that file and end it’s name with ‘&lt;em&gt;.sh&lt;/em&gt;’. We then go to a command line window, start editing of current user’s crontab file with ‘&lt;em&gt;crontab -e&lt;/em&gt;’ and paste that line into it:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;0 &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;	/path/to/our/script.sh&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;png-instead-of-jpg&quot;&gt;PNG instead of JPG&lt;/h2&gt;
+
+&lt;p&gt;What if we want to save to PNG file instead? In some cases, it’s a better choice. If the image contains transparent elements, it’s mandatory since png supports them and jpg does not.&lt;/p&gt;
+
+&lt;p&gt;Since it’s a popular format, there are many compression tools written for it as well.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;pngquant&lt;/strong&gt; is one such tool. It is easy to install on many platforms and is even present in Ubuntu’s official repository. To save it to a png file, we need to do two things:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Change file extension from ‘&lt;em&gt;.jpg&lt;/em&gt;’ to ‘&lt;em&gt;.png&lt;/em&gt;’ in the line with import command.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Replace the jpegoptim command line with this one (remember to change image paths):&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;pngquant &lt;span class=&quot;nt&quot;&gt;--quality&lt;/span&gt; 90 &lt;span class=&quot;nt&quot;&gt;--speed&lt;/span&gt; 1 &lt;span class=&quot;nt&quot;&gt;--force&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--output&lt;/span&gt; /path/to/filename.png /path/to/filename.png&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Quality setting is self-explanatory. We set speed to 1 (slowest, but gives best results).&lt;/p&gt;
+
+&lt;p&gt;‘&lt;em&gt;Force&lt;/em&gt;” option is needed here, as the default pngquant behavior is that it doesn’t overwrite images, and we order the program to save to the same file that it reads from. If we don’t specify the output file, it appends its ending to a filename, and for this example we need to overwrite the source file.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 16 Sep 2020 08:01:21 +0200</pubDate>
+        <link>http://www.chrisbl.com/linux/2020/09/16/jpg-compression-guide-for-linux.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/linux/2020/09/16/jpg-compression-guide-for-linux.html</guid>
+        
+        
+        <category>linux</category>
+        
+      </item>
     
       <item>
         <title>Converting date to ISO 8601 in Python</title>
@@ -834,7 +953,9 @@ Instantly opening image editor is a lot more convenient than saving the image to
 
 &lt;p&gt;The only program we need for the job is &lt;strong&gt;import&lt;/strong&gt;. It is part of Image Magick.&lt;/p&gt;
 
-&lt;p&gt;Image Magick is probably the single most powerful tool for command line slash scripting image processing that was ever written. It is worth getting to know it if you deal with images a lot and feel like you could automate some of your tasks.&lt;/p&gt;
+&lt;p&gt;Image Magick is one of the most powerful tools for command line slash scripting image processing that was ever written. Most likely even the second best one in the software world, after its ambitious fork &lt;a href=&quot;http://www.graphicsmagick.org/&quot;&gt;Graphics Magick&lt;/a&gt; which improves on the original.&lt;/p&gt;
+
+&lt;p&gt;&lt;small&gt;Either of them is worth getting to know it if you deal with images a lot and feel like you could automate some of your tasks. IM has slightly more robust tools, GM can perform faster in some scenarios. We will work with IM’s import.&lt;/small&gt;&lt;/p&gt;
 
 &lt;p&gt;One example of its use is having &lt;strong&gt;watch&lt;/strong&gt; monitor a particular folder where we save memes (the most important images on anyone’s hdd). We can order Image Magick tools to check if maximum resolution is not bigger than something and if that’s the case, reduce it to some sensible maximum.&lt;/p&gt;
 

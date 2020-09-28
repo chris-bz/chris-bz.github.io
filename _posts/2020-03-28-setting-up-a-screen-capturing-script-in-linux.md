@@ -45,7 +45,9 @@ We're going to use **Bash** as our shell language of choice (default in most pop
 
 The only program we need for the job is **import**. It is part of Image Magick.
 
-Image Magick is probably the single most powerful tool for command line slash scripting image processing that was ever written. It is worth getting to know it if you deal with images a lot and feel like you could automate some of your tasks.
+Image Magick is one of the most powerful tools for command line slash scripting image processing that was ever written. Most likely even the second best one in the software world, after its ambitious fork [Graphics Magick](http://www.graphicsmagick.org/) which improves on the original.
+
+<small>Either of them is worth getting to know it if you deal with images a lot and feel like you could automate some of your tasks. IM has slightly more robust tools, GM can perform faster in some scenarios. We will work with IM's import.</small>
 
 One example of its use is having **watch** monitor a particular folder where we save memes (the most important images on anyone's hdd). We can order Image Magick tools to check if maximum resolution is not bigger than something and if that's the case, reduce it to some sensible maximum.
 
