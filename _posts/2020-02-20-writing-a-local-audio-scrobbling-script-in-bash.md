@@ -10,7 +10,7 @@ Once merged with Audioscrobbler, Last.fm became the leading tool for tracking mu
 
 One of the reasons why it became so popular was because it added a social dimension to music tracking. We can start a conversation about an interesting track we've both discovered recently, or concert which, as it turns out, we both attended.
 
-But what if someone doesn't care about all that and just wants to track down history and store it? In that case, there is probably no reason to keep something as precious as lifetime of our musical adventures on a remote server.
+But what if someone not care about all that and just wants to track down history and store it? In that case, there is probably no reason to keep something as precious as lifetime of our musical adventures on a remote server.
 
 That applies even if the company is trustworthy. And people behind last.fm, both before and after [the CBS takeover](https://techcrunch.com/2007/05/30/cbs-acquires-lastfm-for-280m/?guccounter=1), have not given us any reasons doubt them.
 
