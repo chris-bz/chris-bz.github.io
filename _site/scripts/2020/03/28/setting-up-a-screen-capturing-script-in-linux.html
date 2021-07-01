@@ -13,6 +13,9 @@
   <link rel="canonical" href="http://www.chrisbl.com/scripts/2020/03/28/setting-up-a-screen-capturing-script-in-linux.html">
   <link rel="alternate" type="application/rss+xml" title="Chris Blachewicz" href="http://www.chrisbl.com/feed.xml">
   <link rel="shortcut icon" type="image/png" href="/favicon.png">
+  <script>var clicky_site_ids = clicky_site_ids || []; clicky_site_ids.push(101324028);</script>
+  <script async src="//static.getclicky.com/js"></script>
+  <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101324028ns.gif" /></p></noscript>
 </head>
 
 
@@ -160,7 +163,7 @@ Because there is no data (or false, or an empty string - those are guesses becau
 
 <p>If you only have one monitor, you can safely remove ‘<em>-crop 1920x1080+0+0</em> ‘ part. I have two monitors, first one set to the 1080p resolution. Import with ‘*-window root *’ captures content from all monitors to one glued together image. I want to get the left-most monitor’s content only, so after capturing, I need to crop it to position and dimensions of my first monitor.</p>
 
-<p>That is why the script specifies geometry (you can read more about geometry in <a href="/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html">this article</a>). Most people only have one monitor and while the script will work for them as well, they won’t need that bit of code.</p>
+<p>That is why the script specifies geometry (you can read more about geometry in <a href="/guides/2020/01/14/using-commands-to-resize-programs-in-linux.html">this article</a>). Most people only have one monitor and while the script will work for them as well, they won’t need that bit of code.</p>
 
 <p>But because it’s there, it will also work for people who have more than one. If yours has different resolution than 1920x1080, change those numbers. If you don’t want the left-most one’s contents, replace ‘<em>+0+0</em>’ with proper starting pixel location.</p>
 

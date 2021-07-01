@@ -2,7 +2,7 @@
 layout: post
 title:  "CMUS music player review"
 date:   2020-09-01 11:03:28 +0200
-categories: program reviews
+categories: reviews
 ---
 ![CMUS library view](/img/cmus-music-player-review/cmus1.png)
 version reviewed: 2.7.0<br>

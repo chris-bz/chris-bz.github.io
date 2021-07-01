@@ -2,7 +2,7 @@
 layout: post
 title:  "Using commands to resize programs in Linux"
 date:   2020-01-14 14:45:20 +0200
-categories: programs
+categories: guides
 ---
 Neither Linux nor Windows remember window size and position for applications.
 

@@ -10,15 +10,15 @@ Almost all jpg files out there are compressed to some extent. The compression is
 
 Recompression reduces image quality. Exactly how much, it varies. With some images, recompressing 100 times with the same compression level will barely decrease image quality, but other times even single recompression can introduce ugly artifacts.
 
-That's why we should recompress only when changing compression level by a considerable amount, and do it as rarely as possible.
+That's why recompression should only be done when changing compression level by a considerable amount, and hopefully as rarely as possible.
 
 Another important thing is to recompress only to lower levels. Recompressing to higher level means the image will take more hard disk space, but at best it will still only look as good as it did before the last compression.
 
 Image quality can't be magically improved by changing to higher compression level, just like details of a completely blurred image can't be made sharp just by increasing image sharpness - the sharp contours and exact object colors just aren't there behind an image, waiting to be exposed.
 
-Recompression to the same quality is always a bad idea. If the previous compressor did a terrible job, the damage is done already. We can only go lower on the scale and test if it's possible to save space while doing minimum of extra damage.
+Recompression to the same quality is almost always a bad idea. If previous compressor did a terrible job, the damage is done already. We can only go lower on the scale and test if it's possible to save space while doing minimum of extra damage.
 
-Usually the only good reason to recompress is to reduce image quality so it can take less space on hard disk, or so it can be sent faster on the internet. If you don't have these concerns, don't compress. We can always compress later, but once we lose that image quality, we can never get it back.
+Usually the only good reason to recompress is to reduce image quality so it can take less space on hard disk, thus it can take less space, load faster and eat less bandwidth. If you don't have these concerns, don't compress. You can always compress later, but when image details are lost, they are lost forever.
 
 <br>
 ## Finding out compression level of an image

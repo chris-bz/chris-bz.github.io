@@ -5,8 +5,8 @@
     <description>Tips and tricks for keyboard-driven Linux navigation, operations, cross-program integrations etc.</description>
     <link>http://www.chrisbl.com/</link>
     <atom:link href="http://www.chrisbl.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 28 Sep 2020 23:03:40 +0200</pubDate>
-    <lastBuildDate>Mon, 28 Sep 2020 23:03:40 +0200</lastBuildDate>
+    <pubDate>Thu, 01 Jul 2021 12:29:56 +0200</pubDate>
+    <lastBuildDate>Thu, 01 Jul 2021 12:29:56 +0200</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
@@ -17,15 +17,15 @@
 
 &lt;p&gt;Recompression reduces image quality. Exactly how much, it varies. With some images, recompressing 100 times with the same compression level will barely decrease image quality, but other times even single recompression can introduce ugly artifacts.&lt;/p&gt;
 
-&lt;p&gt;That’s why we should recompress only when changing compression level by a considerable amount, and do it as rarely as possible.&lt;/p&gt;
+&lt;p&gt;That’s why recompression should only be done when changing compression level by a considerable amount, and hopefully as rarely as possible.&lt;/p&gt;
 
 &lt;p&gt;Another important thing is to recompress only to lower levels. Recompressing to higher level means the image will take more hard disk space, but at best it will still only look as good as it did before the last compression.&lt;/p&gt;
 
 &lt;p&gt;Image quality can’t be magically improved by changing to higher compression level, just like details of a completely blurred image can’t be made sharp just by increasing image sharpness - the sharp contours and exact object colors just aren’t there behind an image, waiting to be exposed.&lt;/p&gt;
 
-&lt;p&gt;Recompression to the same quality is always a bad idea. If the previous compressor did a terrible job, the damage is done already. We can only go lower on the scale and test if it’s possible to save space while doing minimum of extra damage.&lt;/p&gt;
+&lt;p&gt;Recompression to the same quality is almost always a bad idea. If previous compressor did a terrible job, the damage is done already. We can only go lower on the scale and test if it’s possible to save space while doing minimum of extra damage.&lt;/p&gt;
 
-&lt;p&gt;Usually the only good reason to recompress is to reduce image quality so it can take less space on hard disk, or so it can be sent faster on the internet. If you don’t have these concerns, don’t compress. We can always compress later, but once we lose that image quality, we can never get it back.&lt;/p&gt;
+&lt;p&gt;Usually the only good reason to recompress is to reduce image quality so it can take less space on hard disk, thus it can take less space, load faster and eat less bandwidth. If you don’t have these concerns, don’t compress. You can always compress later, but when image details are lost, they are lost forever.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;h2 id=&quot;finding-out-compression-level-of-an-image&quot;&gt;Finding out compression level of an image&lt;/h2&gt;
@@ -571,11 +571,9 @@ installed on: Linux Mint 19&lt;/p&gt;
 &lt;p&gt;Unfortunately, for me each one of those is a dealbreaker, and all together make CMUS unarmed for daily use.&lt;/p&gt;
 </description>
         <pubDate>Tue, 01 Sep 2020 11:03:28 +0200</pubDate>
-        <link>http://www.chrisbl.com/program/reviews/2020/09/01/cmus-music-player-review.html</link>
-        <guid isPermaLink="true">http://www.chrisbl.com/program/reviews/2020/09/01/cmus-music-player-review.html</guid>
+        <link>http://www.chrisbl.com/reviews/2020/09/01/cmus-music-player-review.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/reviews/2020/09/01/cmus-music-player-review.html</guid>
         
-        
-        <category>program</category>
         
         <category>reviews</category>
         
@@ -744,11 +742,11 @@ map H history_go 1&lt;/p&gt;
 &lt;p&gt;But when we have all sorts of ‘map [key(s)] cd /some/path’ shortcuts and jump between them, those two bindings become way more powerful. And we can bookmark folders on the fly as well (‘m’ saves current folder to bookmarks, tilde and ‘ keys open a list of bookmarked folders).&lt;/p&gt;
 </description>
         <pubDate>Mon, 22 Jun 2020 13:31:14 +0200</pubDate>
-        <link>http://www.chrisbl.com/programs/2020/06/22/setting-up-single-navigation-pane-in-ranger.html</link>
-        <guid isPermaLink="true">http://www.chrisbl.com/programs/2020/06/22/setting-up-single-navigation-pane-in-ranger.html</guid>
+        <link>http://www.chrisbl.com/guides/2020/06/22/setting-up-single-navigation-pane-in-ranger.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/guides/2020/06/22/setting-up-single-navigation-pane-in-ranger.html</guid>
         
         
-        <category>programs</category>
+        <category>guides</category>
         
       </item>
     
@@ -902,11 +900,11 @@ map Kc shell setxkbmap -variant colemak&lt;/p&gt;
 &lt;/blockquote&gt;
 </description>
         <pubDate>Wed, 01 Apr 2020 22:43:18 +0200</pubDate>
-        <link>http://www.chrisbl.com/programs/2020/04/01/ranger-configuration-extras.html</link>
-        <guid isPermaLink="true">http://www.chrisbl.com/programs/2020/04/01/ranger-configuration-extras.html</guid>
+        <link>http://www.chrisbl.com/guides/2020/04/01/ranger-configuration-extras.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/guides/2020/04/01/ranger-configuration-extras.html</guid>
         
         
-        <category>programs</category>
+        <category>guides</category>
         
       </item>
     
@@ -1009,7 +1007,7 @@ Because there is no data (or false, or an empty string - those are guesses becau
 
 &lt;p&gt;If you only have one monitor, you can safely remove ‘&lt;em&gt;-crop 1920x1080+0+0&lt;/em&gt; ‘ part. I have two monitors, first one set to the 1080p resolution. Import with ‘*-window root *’ captures content from all monitors to one glued together image. I want to get the left-most monitor’s content only, so after capturing, I need to crop it to position and dimensions of my first monitor.&lt;/p&gt;
 
-&lt;p&gt;That is why the script specifies geometry (you can read more about geometry in &lt;a href=&quot;/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html&quot;&gt;this article&lt;/a&gt;). Most people only have one monitor and while the script will work for them as well, they won’t need that bit of code.&lt;/p&gt;
+&lt;p&gt;That is why the script specifies geometry (you can read more about geometry in &lt;a href=&quot;/guides/2020/01/14/using-commands-to-resize-programs-in-linux.html&quot;&gt;this article&lt;/a&gt;). Most people only have one monitor and while the script will work for them as well, they won’t need that bit of code.&lt;/p&gt;
 
 &lt;p&gt;But because it’s there, it will also work for people who have more than one. If yours has different resolution than 1920x1080, change those numbers. If you don’t want the left-most one’s contents, replace ‘&lt;em&gt;+0+0&lt;/em&gt;’ with proper starting pixel location.&lt;/p&gt;
 
@@ -1054,7 +1052,7 @@ bindsym Scroll_Lock exec “import -window root -crop 1920x1080+0+0 /location/to
 
 &lt;p&gt;One of the reasons why it became so popular was because it added a social dimension to music tracking. We can start a conversation about an interesting track we’ve both discovered recently, or concert which, as it turns out, we both attended.&lt;/p&gt;
 
-&lt;p&gt;But what if someone doesn’t care about all that and just wants to track down history and store it? In that case, there is probably no reason to keep something as precious as lifetime of our musical adventures on a remote server.&lt;/p&gt;
+&lt;p&gt;But what if someone not care about all that and just wants to track down history and store it? In that case, there is probably no reason to keep something as precious as lifetime of our musical adventures on a remote server.&lt;/p&gt;
 
 &lt;p&gt;That applies even if the company is trustworthy. And people behind last.fm, both before and after &lt;a href=&quot;https://techcrunch.com/2007/05/30/cbs-acquires-lastfm-for-280m/?guccounter=1&quot;&gt;the CBS takeover&lt;/a&gt;, have not given us any reasons doubt them.&lt;/p&gt;
 
@@ -1522,11 +1520,11 @@ wmctrl &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; deadbeef &lt;span class=
 &lt;p&gt;And voila! We now can reshape all our desktop with something as simple as a single command, pressing of a key, or a mouse gesture. We can create as many of those files and shortcuts as we want.&lt;/p&gt;
 </description>
         <pubDate>Tue, 14 Jan 2020 13:45:20 +0100</pubDate>
-        <link>http://www.chrisbl.com/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html</link>
-        <guid isPermaLink="true">http://www.chrisbl.com/programs/2020/01/14/using-commands-to-resize-programs-in-linux.html</guid>
+        <link>http://www.chrisbl.com/guides/2020/01/14/using-commands-to-resize-programs-in-linux.html</link>
+        <guid isPermaLink="true">http://www.chrisbl.com/guides/2020/01/14/using-commands-to-resize-programs-in-linux.html</guid>
         
         
-        <category>programs</category>
+        <category>guides</category>
         
       </item>
     

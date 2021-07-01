@@ -2,7 +2,7 @@
 layout: post
 title:  "Ranger configuration extras"
 date:   2020-04-01 22:43:18 +0200
-categories: programs
+categories: guides
 ---
 Ranger is probably the single most powerful file manager application on any operating system.
 

@@ -2,7 +2,7 @@
 layout: post
 title:  "Setting up single navigation pane in Ranger and why it's a good idea"
 date:   2020-06-22 13:31:14 +0200
-categories: programs
+categories: guides
 ---
 By default, Ranger starts in 3-pane view, which makes it unique, but not very practical. Fortunately, this can be easily changed.
 
